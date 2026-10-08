@@ -1,0 +1,57 @@
+{
+  "checkedAt": "2026-10-07T14:59:13.252Z",
+  "schemaBefore": 2,
+  "schemaAfter": 3,
+  "checks": [
+    {
+      "table": "settings",
+      "rows": 3,
+      "preserved": true
+    },
+    {
+      "table": "users",
+      "rows": 0,
+      "preserved": true
+    },
+    {
+      "table": "sessions",
+      "rows": 0,
+      "preserved": true
+    },
+    {
+      "table": "drafts",
+      "rows": 0,
+      "preserved": true
+    },
+    {
+      "table": "releases",
+      "rows": 1,
+      "preserved": true
+    },
+    {
+      "table": "identities",
+      "rows": 362,
+      "preserved": true
+    },
+    {
+      "table": "reports",
+      "rows": 0,
+      "preserved": true
+    },
+    {
+      "table": "operations",
+      "rows": 0,
+      "preserved": true
+    },
+    {
+      "table": "audit",
+      "rows": 0,
+      "preserved": true
+    },
+    {
+      "table": "provider_runs",
+      "rows": 0,
+      "preserved": true
+    }
+  ]
+}

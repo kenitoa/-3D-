@@ -1,0 +1,13 @@
+node_modules/
+dist/
+vendor/
+test-results/
+playwright-report/
+.env
+.env.*
+!.env.example
+var/
+backups/
+evidence/*.pdf
+evidence/*.html
+evidence/campus-map-page*.png

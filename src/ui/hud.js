@@ -1,5 +1,5 @@
 // Vanilla JavaScript UI layer: Babylon.js GUI 2D AdvancedDynamicTexture only.
-const GUI = BABYLON.GUI;
+const GUI = window.BABYLON?.GUI;
 window.CampusHud = {};
 
 function text(name, value, size, color = "#173625", weight = "normal") {
@@ -50,13 +50,17 @@ function connectHover(scene, targets, badge) {
 }
 
 function connectClick(scene, targets, action) {
-  if (!BABYLON.ActionManager || !BABYLON.ExecuteCodeAction) return;
+  if (!BABYLON.ActionManager || !BABYLON.ExecuteCodeAction) return () => {};
+  const actions = [];
   targets.forEach((target) => {
     target.isPickable = true;
     target.actionManager = target.actionManager || new BABYLON.ActionManager(scene);
     target.actionManager.hoverCursor = "pointer";
-    target.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, action));
+    const manager = target.actionManager;
+    const registered = manager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, action));
+    actions.push(() => manager.unregisterAction(registered));
   });
+  return () => actions.forEach((release) => release());
 }
 
 function escapeHtml(value) {
@@ -147,14 +151,14 @@ function floorZoneHtml(zone, index) {
 
 function floorTabsHtml(floors) {
   return floors.map((group, index) => `
-    <button class="floor-tab${index === 0 ? " is-active" : ""}" type="button" data-floor-target="${escapeHtml(group.floor)}">
+    <button class="floor-tab${index === 0 ? " is-active" : ""}" type="button" role="tab" id="interior-tab-${index}" aria-controls="interior-layer-${index}" aria-selected="${index === 0}" tabindex="${index === 0 ? 0 : -1}" data-floor-target="${escapeHtml(group.floor)}">
       <span>${escapeHtml(group.floor)}</span><em>${group.zones.length}구역</em>
     </button>`).join("");
 }
 
 function floorLayersHtml(floors, title) {
   return floors.map((group, index) => `
-    <div class="floor-layer" data-floor-layer="${escapeHtml(group.floor)}"${index === 0 ? "" : " hidden"}>
+    <div class="floor-layer" role="tabpanel" id="interior-layer-${index}" aria-labelledby="interior-tab-${index}" tabindex="0" data-floor-layer="${escapeHtml(group.floor)}"${index === 0 ? "" : " hidden"}>
       <div class="floor-layer-title">${escapeHtml(title)} · ${escapeHtml(group.floor)}</div>
       ${group.zones.length ? group.zones.map(floorZoneHtml).join("") : `<div class="floor-empty">공개자료에서 확인된 실 배치가 아직 없습니다.</div>`}
     </div>`).join("");
@@ -186,18 +190,68 @@ function roomCardsHtml(rooms) {
     </li>`).join("");
 }
 
-function createInteriorDetailController(scene) {
+function createInteriorDetailController(scene, camera) {
   const panel = document.getElementById("buildingDetail");
   if (!panel) {
-    return { registerInterior: () => {}, hide: () => {} };
+    return { registerInterior: () => {}, hide: () => {}, openInterior: () => false, openData: () => {}, setLifecycle: () => {}, setPickingEnabled: () => {}, dispose: () => {} };
   }
-
+  const registry = new Map();
+  let previousFocus = null;
+  let snapshot = null;
+  let openedId = null;
+  let backgroundState = [];
+  let lifecycle = {};
+  let disposed = false;
+  let pickingEnabled = true;
+  const releasePicking = new Map();
+  const captureCamera = () => {
+    if (!camera) return null;
+    const saved = {};
+    ["position", "rotation", "rotationQuaternion"].forEach((key) => {
+      if (camera[key] && typeof camera[key].clone === "function") saved[key] = camera[key].clone();
+    });
+    if (typeof camera.getTarget === "function") saved.target = camera.getTarget().clone();
+    ["alpha", "beta", "radius", "mode", "orthoLeft", "orthoRight", "orthoTop", "orthoBottom"].forEach((key) => {
+      if (camera[key] !== undefined) saved[key] = camera[key];
+    });
+    return saved;
+  };
+  const restoreCamera = (saved) => {
+    if (!camera || !saved) return;
+    if (saved.target && typeof camera.setTarget === "function") camera.setTarget(saved.target);
+    Object.entries(saved).forEach(([key, value]) => {
+      if (key === "target") return;
+      if (value && typeof value.clone === "function" && camera[key] && typeof camera[key].copyFrom === "function") camera[key].copyFrom(value);
+      else camera[key] = value;
+    });
+  };
   const hide = () => {
+    if (disposed || panel.hidden) return;
     panel.hidden = true;
     panel.innerHTML = "";
+    backgroundState.forEach(([element, wasInert]) => { element.inert = wasInert; });
+    backgroundState = [];
+    if (typeof lifecycle.restore === "function") lifecycle.restore(snapshot);
+    else restoreCamera(snapshot);
+    if (typeof lifecycle.onClose === "function") lifecycle.onClose(openedId);
+    snapshot = null;
+    openedId = null;
+    if (previousFocus && previousFocus.isConnected && typeof previousFocus.focus === "function") previousFocus.focus();
+    else document.getElementById("renderCanvas")?.focus();
+    previousFocus = null;
   };
-
-  const open = (data) => {
+  const open = (data, focus, id) => {
+    if (disposed) return false;
+    if (panel.hidden) {
+      previousFocus = document.activeElement;
+      snapshot = typeof lifecycle.capture === "function" ? lifecycle.capture() : captureCamera();
+      backgroundState = Array.from(document.body.children)
+        .filter((element) => element !== panel && !["SCRIPT", "NOSCRIPT"].includes(element.tagName))
+        .map((element) => [element, !!element.inert]);
+      backgroundState.forEach(([element]) => { element.inert = true; });
+    }
+    openedId = id || String(data.id || "").replace(/-interior$/, "");
+    if (typeof focus === "function") focus();
     const floors = groupedFloorData(data);
     const floorTabs = floorTabsHtml(floors);
     const floorLayers = floorLayersHtml(floors, data.title || "내부도");
@@ -213,26 +267,29 @@ function createInteriorDetailController(scene) {
               <span class="detail-badge">${escapeHtml(data.floor || "1F")}</span>
               <span class="detail-count">${floors.length}개 층 · ${(data.zones || []).length}개 구역 · ${(data.rooms || []).length}개 핵심 공간</span>
             </div>
-            <h2 class="detail-title">${escapeHtml(data.title)}</h2>
+            <h2 id="interiorDetailTitle" class="detail-title">${escapeHtml(data.title)}</h2>
             <p class="detail-subtitle">${escapeHtml(data.subtitle || "")}</p>
           </div>
           <button class="detail-close" type="button" aria-label="상세 화면 닫기">×</button>
         </header>
         <div class="detail-plan-wrap">
-          <div class="floor-tabs" aria-label="층 선택">${floorTabs}</div>
+          <div class="floor-tabs" role="tablist" aria-label="층 선택">${floorTabs}</div>
           <div class="detail-floor" aria-label="${escapeHtml(data.title)} 평면 배치도">
             <div class="floor-frame" aria-hidden="true"></div>
             <div class="footprint-layer" aria-hidden="true">${footprints}</div>
             <div class="floor-core-line floor-core-line-x" aria-hidden="true"></div>
             <div class="floor-core-line floor-core-line-y" aria-hidden="true"></div>
             ${floorLayers}
-            <div class="plan-compass" aria-hidden="true"><span>N</span></div>
-            <div class="plan-scale" aria-hidden="true"><span></span>공개자료 기반 축소 평면</div>
+            <div class="plan-scale">공개자료 기반 추정 배치 · 방위·실측 치수 미확인</div>
           </div>
           <div class="detail-legend">${legend}</div>
         </div>
       </div>
       <aside class="detail-aside">
+        <section class="detail-card">
+          <h3>외부와의 연결</h3>
+          <p>선택한 건물의 외관 모델과 연결된 내부 정보입니다. 현관·층별 외부 출입구의 정확한 위치, 지형 단차와 운영 상태는 추가 확인이 필요합니다.</p>
+        </section>
         <section class="detail-card">
           <h3>확인된 내부 요소</h3>
           <ul>${confirmed}</ul>
@@ -251,31 +308,75 @@ function createInteriorDetailController(scene) {
         </section>
       </aside>`;
     panel.hidden = false;
+    panel.setAttribute("role", "dialog");
+    panel.setAttribute("aria-modal", "true");
+    panel.setAttribute("aria-labelledby", "interiorDetailTitle");
     const close = panel.querySelector(".detail-close");
     if (close) close.addEventListener("click", hide, { once: true });
-    panel.querySelectorAll(".floor-tab").forEach((tab) => {
-      tab.addEventListener("click", () => {
+    const selectFloor = (tab) => {
         const target = tab.getAttribute("data-floor-target");
         panel.querySelectorAll(".floor-tab").forEach((button) => {
           button.classList.toggle("is-active", button === tab);
+          button.setAttribute("aria-selected", String(button === tab));
+          button.tabIndex = button === tab ? 0 : -1;
         });
         panel.querySelectorAll(".floor-layer").forEach((layer) => {
           layer.hidden = layer.getAttribute("data-floor-layer") !== target;
         });
+    };
+    panel.querySelectorAll(".floor-tab").forEach((tab) => {
+      tab.addEventListener("click", () => selectFloor(tab));
+      tab.addEventListener("keydown", (event) => {
+        const tabs = Array.from(panel.querySelectorAll(".floor-tab"));
+        const index = tabs.indexOf(tab);
+        const next = event.key === "ArrowRight" ? (index + 1) % tabs.length : event.key === "ArrowLeft" ? (index - 1 + tabs.length) % tabs.length : event.key === "Home" ? 0 : event.key === "End" ? tabs.length - 1 : -1;
+        if (next >= 0) { event.preventDefault(); selectFloor(tabs[next]); tabs[next].focus(); }
       });
     });
+    if (typeof lifecycle.onOpen === "function") lifecycle.onOpen(openedId);
+    close?.focus();
   };
 
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && !panel.hidden) hide();
-  });
+  const keydown = (event) => {
+    if (disposed || panel.hidden) return;
+    if (event.key === "Escape") { event.preventDefault(); hide(); return; }
+    if (event.key === "Tab") {
+      const controls = Array.from(panel.querySelectorAll("button, a[href], input, select, textarea, [tabindex]"))
+        .filter((element) => !element.disabled && element.tabIndex >= 0 && !element.closest("[hidden]"));
+      const first = controls[0];
+      const last = controls[controls.length - 1];
+      if (event.shiftKey && (document.activeElement === first || !panel.contains(document.activeElement))) { event.preventDefault(); last?.focus(); }
+      if (!event.shiftKey && (document.activeElement === last || !panel.contains(document.activeElement))) { event.preventDefault(); first?.focus(); }
+    }
+  };
+  document.addEventListener("keydown", keydown);
 
   return {
     hide,
-    registerInterior: (mesh, data, focus) => connectClick(scene, buildingMeshes(scene, mesh), () => {
-      if (typeof focus === "function") focus();
-      open(data);
-    })
+    dispose() { if (disposed) return; hide(); disposed = true; document.removeEventListener("keydown", keydown); registry.clear(); releasePicking.forEach((release) => release()); releasePicking.clear(); lifecycle = {}; },
+    setLifecycle: (callbacks) => { lifecycle = callbacks || {}; },
+    setPickingEnabled: (enabled) => { pickingEnabled = enabled === true; },
+    openData: (data) => open(data),
+    openInterior: (id) => {
+      if (disposed) return false;
+      const entry = registry.get(id) || registry.get(String(id).replace(/-interior$/, ""));
+      if (!entry) return false;
+      open(entry.data, entry.focus, entry.id);
+      return true;
+    },
+    registerInterior: (mesh, data, focus, buildingId) => {
+      if (disposed) return;
+      const id = buildingId || String(data.id || "").replace(/-interior$/, "");
+      const entry = { id, data, focus };
+      registry.set(id, entry);
+      if (data.id) registry.set(data.id, entry);
+      releasePicking.get(id)?.(); releasePicking.delete(id);
+      if (scene && mesh) {
+        const release = connectClick(scene, buildingMeshes(scene, mesh), () => { if (pickingEnabled) open(data, focus, id); });
+        releasePicking.set(id, release);
+        mesh.onDisposeObservable?.addOnce(() => { if (releasePicking.get(id) === release) { release(); releasePicking.delete(id); } });
+      }
+    }
   };
 }
 
@@ -303,65 +404,23 @@ function labelForMesh(ui, scene, mesh, label, color = "#183a29") {
   return badge;
 }
 
-function createScaleBar(ui, scale) {
-  const panel = new GUI.StackPanel("scale-panel");
-  panel.width = "300px";
-  panel.height = "78px";
-  panel.paddingLeft = "24px";
-  panel.paddingBottom = "22px";
-  panel.spacing = 5;
-  panel.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-  panel.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-  ui.addControl(panel);
-
-  const title = text("scale-title", `축척 ${scale.designScale}`, 15, "#173625", "800");
-  title.height = "22px";
-  panel.addControl(title);
-
-  const barWrap = new GUI.Rectangle("scale-bar-wrap");
-  barWrap.width = "240px";
-  barWrap.height = "24px";
-  barWrap.thickness = 0;
-  barWrap.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-  panel.addControl(barWrap);
-
-  const bar = new GUI.Rectangle("scale-bar");
-  bar.width = "220px";
-  bar.height = "8px";
-  bar.thickness = 0;
-  bar.background = "#173625";
-  bar.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-  bar.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-  barWrap.addControl(bar);
-
-  [0, 1].forEach((side) => {
-    const tick = new GUI.Rectangle(`scale-tick-${side}`);
-    tick.width = "3px";
-    tick.height = "22px";
-    tick.thickness = 0;
-    tick.background = "#173625";
-    tick.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-    tick.left = side ? "217px" : "0px";
-    barWrap.addControl(tick);
-  });
-
-  const meter = text("scale-meter", `${scale.scaleBarMeters}m · 1 unit = ${scale.babylonUnitMeters}m`, 13, "#345440", "700");
-  meter.height = "20px";
-  panel.addControl(meter);
-}
-
-window.CampusHud.createHud = function createHud(scene, camera, campusInfo, buildings, janggongResearch, focusJanggong) {
+window.CampusHud.createHud = function createHud(scene, camera, _campusInfo, _buildings, _janggongResearch, _focusJanggong) {
   const ui = GUI.AdvancedDynamicTexture.CreateFullscreenUI("campus-ui", true, scene);
   ui.idealWidth = 1440;
   ui.idealHeight = 900;
   ui.renderAtIdealSize = true;
-  createScaleBar(ui, CampusData.scale);
-  const detail = createInteriorDetailController(scene);
+  const detail = createInteriorDetailController(scene, camera);
 
   return {
     ui,
     labelForMesh: (mesh, label, color) => labelForMesh(ui, scene, mesh, label, color),
-    registerInterior: (mesh, data, focus) => detail.registerInterior(mesh, data, focus),
-    hideInterior: () => detail.hide()
+    registerInterior: (mesh, data, focus, id) => detail.registerInterior(mesh, data, focus, id),
+    openInterior: (id) => detail.openInterior(id),
+    setInteriorLifecycle: (callbacks) => detail.setLifecycle(callbacks),
+    setPickingEnabled: (enabled) => detail.setPickingEnabled(enabled),
+    hideInterior: () => detail.hide(),
+    dispose: () => { detail.dispose(); ui.dispose(); }
   };
 };
+
+window.CampusHud.createTextInteriorController = () => createInteriorDetailController(null, null);

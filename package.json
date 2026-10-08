@@ -1,0 +1,39 @@
+{
+  "name": "hanshin-campus-overview",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Evidence-aware Hanshin University campus overview, preserving the existing Babylon.js models.",
+  "scripts": {
+    "prepare:runtime": "node scripts/prepare-runtime.mjs",
+    "predev": "node scripts/build-server.mjs",
+    "dev": "node scripts/serve.mjs --platform",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "pretest": "node scripts/build-server.mjs",
+    "test": "node --test --test-concurrency=2 tests/*.test.mjs",
+    "test:browser": "playwright test",
+    "build": "node scripts/build.mjs",
+    "check:generated": "node scripts/build.mjs --check",
+    "admin:create": "node scripts/manage-platform.mjs create-user",
+    "db:backup": "node scripts/manage-platform.mjs backup",
+    "admin:disable": "node scripts/manage-platform.mjs disable-user"
+  },
+  "dependencies": {
+    "babylonjs": "9.29.0",
+    "babylonjs-gui": "9.29.0",
+    "babylonjs-loaders": "9.29.0",
+    "qr": "0.7.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.63.0",
+    "@types/node": "22.20.5",
+    "esbuild": "0.28.2",
+    "eslint": "10.12.0",
+    "jsdom": "30.1.2",
+    "typescript": "7.0.2"
+  },
+  "engines": {
+    "node": ">=22.22.3"
+  }
+}

@@ -1,0 +1,145 @@
+{
+  "latestOsm": "unavailable",
+  "latestOsmAttempts": [
+    "Overpass main: HTTP 504 then 406",
+    "Overpass kumi: timeout",
+    "OSM API map and full way: HTTP 429"
+  ],
+  "officialMarkerCount": 15,
+  "illustratedFacilityPolygonCount": 8,
+  "illustratedEntranceCount": 3,
+  "legalBoundary": "unverified",
+  "cadastralBoundary": "unverified",
+  "aerialImagery": "unverified",
+  "surveyedElevation": "unverified",
+  "surveyedFootprints": "unverified",
+  "calibration": {
+    "trainingIds": [
+      "janggong",
+      "hanul",
+      "joonha",
+      "neutbom"
+    ],
+    "validationIds": [
+      "pilheon",
+      "manwoo",
+      "shalom",
+      "immanuel",
+      "gyeongsam",
+      "songam",
+      "sotong",
+      "practice",
+      "seongbin",
+      "haeoreum",
+      "childcare"
+    ],
+    "samples": [
+      {
+        "id": "pilheon",
+        "errorMeters": 6.050895676859093
+      },
+      {
+        "id": "manwoo",
+        "errorMeters": 36.03386789104708
+      },
+      {
+        "id": "shalom",
+        "errorMeters": 68.36570240065937
+      },
+      {
+        "id": "immanuel",
+        "errorMeters": 232.95346255087205
+      },
+      {
+        "id": "gyeongsam",
+        "errorMeters": 62.062301419383736
+      },
+      {
+        "id": "songam",
+        "errorMeters": 64.80434320111664
+      },
+      {
+        "id": "sotong",
+        "errorMeters": 44.68047870541149
+      },
+      {
+        "id": "practice",
+        "errorMeters": 48.57409027067364
+      },
+      {
+        "id": "seongbin",
+        "errorMeters": 40.162397862457524
+      },
+      {
+        "id": "haeoreum",
+        "errorMeters": 279.8154245315658
+      },
+      {
+        "id": "childcare",
+        "errorMeters": 124.18429122760449
+      }
+    ],
+    "count": 11,
+    "rmsMeters": 123.58831429260681,
+    "maxMeters": 279.8154245315658,
+    "independent": true,
+    "interpretation": "Held-out official guide markers versus legacy model-anchor fit. This measures registration error, not survey accuracy."
+  },
+  "illustrationRegistration": {
+    "trainingIds": [
+      "janggong",
+      "joonha",
+      "seongbin",
+      "hanul",
+      "childcare",
+      "neutbom"
+    ],
+    "samples": [
+      {
+        "id": "pilheon",
+        "errorMeters": 29.090205532204102
+      },
+      {
+        "id": "manwoo",
+        "errorMeters": 23.39845358088493
+      },
+      {
+        "id": "shalom",
+        "errorMeters": 18.192478573163925
+      },
+      {
+        "id": "immanuel",
+        "errorMeters": 64.86100595319603
+      },
+      {
+        "id": "gyeongsam",
+        "errorMeters": 75.09703968328671
+      },
+      {
+        "id": "songam",
+        "errorMeters": 87.09201566718106
+      },
+      {
+        "id": "sotong",
+        "errorMeters": 92.86775033283884
+      },
+      {
+        "id": "practice",
+        "errorMeters": 59.66314172898753
+      },
+      {
+        "id": "haeoreum",
+        "errorMeters": 80.57607945422166
+      }
+    ],
+    "count": 9,
+    "rmsMeters": 64.83555500307656,
+    "maxMeters": 92.86775033283884,
+    "independent": true,
+    "method": "Global fit diagnostics on held-out guide markers. Facilities use specified nearby three-anchor fits; local fits are estimates, not independently surveyed.",
+    "interpretation": "Oblique illustration has inherent perspective and roof marker errors; dimensions remain unverified."
+  },
+  "missingFootprintsFromOriginalOutline": 84,
+  "buildingAnchorsInsideGuideEnvelope": true,
+  "facilityRingsInsideGuideEnvelope": true
+}

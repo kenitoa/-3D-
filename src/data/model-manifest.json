@@ -1,0 +1,855 @@
+{
+  "schemaVersion": 1,
+  "campusId": "hanshin-gg",
+  "version": "2026-10-07-refinement-lod-1",
+  "models": [
+    {
+      "id": "janggong",
+      "legacyId": "janggong",
+      "kind": "legacy",
+      "global": "JanggongModel",
+      "export": "createJanggongModel",
+      "source": "src/models/janggong.js",
+      "status": "estimated",
+      "variants": [
+        {
+          "id": "overview",
+          "kind": "glb",
+          "source": "assets/models/generated/janggong-overview.glb",
+          "placement": {
+            "units": "m",
+            "upAxis": "Y",
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "anchorMeters": [
+              33.33624839782715,
+              -14.078598022460938,
+              39.54559087753296
+            ],
+            "yawRadians": 0,
+            "altitudeDatum": "local-site-meters",
+            "mode": "inferred"
+          },
+          "minScreenCoverage": 0,
+          "bytes": 53168,
+          "sha256": "057523e477b9d6be1b6f1db0563360c9b6fc8754336894e8c9c9e64fa48ce027"
+        },
+        {
+          "id": "close",
+          "kind": "legacy",
+          "source": "src/models/janggong.js",
+          "global": "JanggongModel",
+          "export": "createJanggongModel",
+          "minScreenCoverage": 0.045,
+          "maxDistanceMeters": 160
+        }
+      ],
+      "provenance": {
+        "sourceId": "legacy-model-envelope",
+        "license": "Project-authored estimated geometry; external source reuse rights must be checked separately",
+        "creator": "campus-project",
+        "tool": "Babylon NullEngine 9.29.0 + Campus triangle writer 1",
+        "settings": "existing alignment, one primitive per material, no triangles deleted",
+        "sourceHash": "3f5b77928cc085da4599ce4b2e4b6c3647763398f6e93b7f5ca2bb84f5ef9647"
+      }
+    },
+    {
+      "id": "pilheon",
+      "legacyId": "pilheon",
+      "kind": "legacy",
+      "global": "PilheonModel",
+      "export": "createPilheonModel",
+      "source": "src/models/pilheon.js",
+      "status": "estimated",
+      "variants": [
+        {
+          "id": "overview",
+          "kind": "glb",
+          "source": "assets/models/generated/pilheon-overview.glb",
+          "placement": {
+            "units": "m",
+            "upAxis": "Y",
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "anchorMeters": [
+              31.85314416885376,
+              -23.918986320495605,
+              38.02574157714844
+            ],
+            "yawRadians": 0,
+            "altitudeDatum": "local-site-meters",
+            "mode": "inferred"
+          },
+          "minScreenCoverage": 0,
+          "bytes": 21284,
+          "sha256": "794b00f0c0bbb0640267879fc1e8b2b43d334ce201ec04c93483b0629a86ce09"
+        },
+        {
+          "id": "close",
+          "kind": "legacy",
+          "source": "src/models/pilheon.js",
+          "global": "PilheonModel",
+          "export": "createPilheonModel",
+          "minScreenCoverage": 0.045,
+          "maxDistanceMeters": 160
+        }
+      ],
+      "provenance": {
+        "sourceId": "legacy-model-envelope",
+        "license": "Project-authored estimated geometry; external source reuse rights must be checked separately",
+        "creator": "campus-project",
+        "tool": "Babylon NullEngine 9.29.0 + Campus triangle writer 1",
+        "settings": "existing alignment, one primitive per material, no triangles deleted",
+        "sourceHash": "bd649f13cbcd9657a57669063529517121187c0241d9de8a0d6fd22c1dd5ce45"
+      }
+    },
+    {
+      "id": "manwoo",
+      "legacyId": "manwoo",
+      "kind": "legacy",
+      "global": "ManwooModel",
+      "export": "createManwooModel",
+      "source": "src/models/manwoo.js",
+      "status": "estimated",
+      "variants": [
+        {
+          "id": "overview",
+          "kind": "glb",
+          "source": "assets/models/generated/manwoo-overview.glb",
+          "placement": {
+            "units": "m",
+            "upAxis": "Y",
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "anchorMeters": [
+              -8.632627725601196,
+              -94.59164619445801,
+              82.27270126342773
+            ],
+            "yawRadians": 0,
+            "altitudeDatum": "local-site-meters",
+            "mode": "inferred"
+          },
+          "minScreenCoverage": 0,
+          "bytes": 63888,
+          "sha256": "a061579c93cc26932fbedc074bcc764bee039d03137cc2d44819a083920e5967"
+        },
+        {
+          "id": "close",
+          "kind": "legacy",
+          "source": "src/models/manwoo.js",
+          "global": "ManwooModel",
+          "export": "createManwooModel",
+          "minScreenCoverage": 0.045,
+          "maxDistanceMeters": 160
+        }
+      ],
+      "provenance": {
+        "sourceId": "legacy-model-envelope",
+        "license": "Project-authored estimated geometry; external source reuse rights must be checked separately",
+        "creator": "campus-project",
+        "tool": "Babylon NullEngine 9.29.0 + Campus triangle writer 1",
+        "settings": "existing alignment, one primitive per material, no triangles deleted",
+        "sourceHash": "d12d7ce7923e9bfaa348948dba17bc33d76cd45381d8a824e80f44aac8bfaafa"
+      }
+    },
+    {
+      "id": "shalom",
+      "legacyId": "shalom",
+      "kind": "legacy",
+      "global": "ShalomModel",
+      "export": "createShalomModel",
+      "source": "src/models/shalom.js",
+      "status": "estimated",
+      "variants": [
+        {
+          "id": "overview",
+          "kind": "glb",
+          "source": "assets/models/generated/shalom-overview.glb",
+          "placement": {
+            "units": "m",
+            "upAxis": "Y",
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "anchorMeters": [
+              -101.8575668334961,
+              -16.10189437866211,
+              57.79510021209717
+            ],
+            "yawRadians": 0,
+            "altitudeDatum": "local-site-meters",
+            "mode": "inferred"
+          },
+          "minScreenCoverage": 0,
+          "bytes": 24608,
+          "sha256": "3c8ff8f10e825404ecd20419dfa3eb3e172f363687ff3ab79fc26687fb231728"
+        },
+        {
+          "id": "close",
+          "kind": "legacy",
+          "source": "src/models/shalom.js",
+          "global": "ShalomModel",
+          "export": "createShalomModel",
+          "minScreenCoverage": 0.045,
+          "maxDistanceMeters": 160
+        }
+      ],
+      "provenance": {
+        "sourceId": "legacy-model-envelope",
+        "license": "Project-authored estimated geometry; external source reuse rights must be checked separately",
+        "creator": "campus-project",
+        "tool": "Babylon NullEngine 9.29.0 + Campus triangle writer 1",
+        "settings": "existing alignment, one primitive per material, no triangles deleted",
+        "sourceHash": "2a28de597968476feed1faf71a97c4b15cc1ddbd7691cf1008b66ec6115fcd58"
+      }
+    },
+    {
+      "id": "immanuel",
+      "legacyId": "immanuel",
+      "kind": "legacy",
+      "global": "ImmanuelModel",
+      "export": "createImmanuelModel",
+      "source": "src/models/immanuel.js",
+      "status": "estimated",
+      "variants": [
+        {
+          "id": "overview",
+          "kind": "glb",
+          "source": "assets/models/generated/immanuel-overview.glb",
+          "placement": {
+            "units": "m",
+            "upAxis": "Y",
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "anchorMeters": [
+              -104.1875171661377,
+              32.519004344940186,
+              11.560828685760498
+            ],
+            "yawRadians": 0,
+            "altitudeDatum": "local-site-meters",
+            "mode": "inferred"
+          },
+          "minScreenCoverage": 0,
+          "bytes": 31128,
+          "sha256": "fca90519113ce565fe4a5cbf9859af6bf2dc44349905eeef6d1348eb528449fa"
+        },
+        {
+          "id": "close",
+          "kind": "legacy",
+          "source": "src/models/immanuel.js",
+          "global": "ImmanuelModel",
+          "export": "createImmanuelModel",
+          "minScreenCoverage": 0.045,
+          "maxDistanceMeters": 160
+        }
+      ],
+      "provenance": {
+        "sourceId": "legacy-model-envelope",
+        "license": "Project-authored estimated geometry; external source reuse rights must be checked separately",
+        "creator": "campus-project",
+        "tool": "Babylon NullEngine 9.29.0 + Campus triangle writer 1",
+        "settings": "existing alignment, one primitive per material, no triangles deleted",
+        "sourceHash": "6457c936e36bb8463c8dfd24a99f6e59a3c36fb70017e021f12233f6655c1145"
+      }
+    },
+    {
+      "id": "gyeongsam",
+      "legacyId": "gyeongsam",
+      "kind": "legacy",
+      "global": "GyeongsamModel",
+      "export": "createGyeongsamModel",
+      "source": "src/models/gyeongsam.js",
+      "status": "estimated",
+      "variants": [
+        {
+          "id": "overview",
+          "kind": "glb",
+          "source": "assets/models/generated/gyeongsam-overview.glb",
+          "placement": {
+            "units": "m",
+            "upAxis": "Y",
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "anchorMeters": [
+              43.86031627655029,
+              66.9117546081543,
+              10.483816862106323
+            ],
+            "yawRadians": 0,
+            "altitudeDatum": "local-site-meters",
+            "mode": "inferred"
+          },
+          "minScreenCoverage": 0,
+          "bytes": 38476,
+          "sha256": "9234aa2ad51abd163b7fd5bad515567d91cd0754215a2241b3478a769dcebabe"
+        },
+        {
+          "id": "close",
+          "kind": "legacy",
+          "source": "src/models/gyeongsam.js",
+          "global": "GyeongsamModel",
+          "export": "createGyeongsamModel",
+          "minScreenCoverage": 0.045,
+          "maxDistanceMeters": 160
+        }
+      ],
+      "provenance": {
+        "sourceId": "legacy-model-envelope",
+        "license": "Project-authored estimated geometry; external source reuse rights must be checked separately",
+        "creator": "campus-project",
+        "tool": "Babylon NullEngine 9.29.0 + Campus triangle writer 1",
+        "settings": "existing alignment, one primitive per material, no triangles deleted",
+        "sourceHash": "fb41511105c936b3954c3fdfbc44d9c7c98f97a9edc580065763330ed6daa116"
+      }
+    },
+    {
+      "id": "songam",
+      "legacyId": "songam",
+      "kind": "legacy",
+      "global": "SongamModel",
+      "export": "createSongamModel",
+      "source": "src/models/songam.js",
+      "status": "estimated",
+      "variants": [
+        {
+          "id": "overview",
+          "kind": "glb",
+          "source": "assets/models/generated/songam-overview.glb",
+          "placement": {
+            "units": "m",
+            "upAxis": "Y",
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "anchorMeters": [
+              163.6754035949707,
+              17.805488109588623,
+              17.742464542388916
+            ],
+            "yawRadians": 0,
+            "altitudeDatum": "local-site-meters",
+            "mode": "inferred"
+          },
+          "minScreenCoverage": 0,
+          "bytes": 37348,
+          "sha256": "91f823be5ae3866e9fe8baa0ef8e21a906381f70ed2d222f550fee6b2ea87146"
+        },
+        {
+          "id": "close",
+          "kind": "legacy",
+          "source": "src/models/songam.js",
+          "global": "SongamModel",
+          "export": "createSongamModel",
+          "minScreenCoverage": 0.045,
+          "maxDistanceMeters": 160
+        }
+      ],
+      "provenance": {
+        "sourceId": "legacy-model-envelope",
+        "license": "Project-authored estimated geometry; external source reuse rights must be checked separately",
+        "creator": "campus-project",
+        "tool": "Babylon NullEngine 9.29.0 + Campus triangle writer 1",
+        "settings": "existing alignment, one primitive per material, no triangles deleted",
+        "sourceHash": "71898210800ff70d88dfe74be6a005d4581c4e382d757b7de4046595621e7bd1"
+      }
+    },
+    {
+      "id": "sotong",
+      "legacyId": "sotong",
+      "kind": "legacy",
+      "global": "SotongModel",
+      "export": "createSotongModel",
+      "source": "src/models/sotong.js",
+      "status": "estimated",
+      "variants": [
+        {
+          "id": "overview",
+          "kind": "glb",
+          "source": "assets/models/generated/sotong-overview.glb",
+          "placement": {
+            "units": "m",
+            "upAxis": "Y",
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "anchorMeters": [
+              79.73101615905762,
+              56.40125274658203,
+              15.113754272460938
+            ],
+            "yawRadians": 0,
+            "altitudeDatum": "local-site-meters",
+            "mode": "inferred"
+          },
+          "minScreenCoverage": 0,
+          "bytes": 52608,
+          "sha256": "50f4dcfbbf5b00380930f6c4bbb81c4fcf1da2dc2374340fd291eb2b4c3ccaf8"
+        },
+        {
+          "id": "close",
+          "kind": "legacy",
+          "source": "src/models/sotong.js",
+          "global": "SotongModel",
+          "export": "createSotongModel",
+          "minScreenCoverage": 0.045,
+          "maxDistanceMeters": 160
+        }
+      ],
+      "provenance": {
+        "sourceId": "legacy-model-envelope",
+        "license": "Project-authored estimated geometry; external source reuse rights must be checked separately",
+        "creator": "campus-project",
+        "tool": "Babylon NullEngine 9.29.0 + Campus triangle writer 1",
+        "settings": "existing alignment, one primitive per material, no triangles deleted",
+        "sourceHash": "2181019402287946bdd2b8cb079db4fe353347416887fb29c141a77fa9bbf2f1"
+      }
+    },
+    {
+      "id": "practice",
+      "legacyId": "practice",
+      "kind": "legacy",
+      "global": "PracticeModel",
+      "export": "createPracticeModel",
+      "source": "src/models/practice.js",
+      "status": "estimated",
+      "variants": [
+        {
+          "id": "overview",
+          "kind": "glb",
+          "source": "assets/models/generated/practice-overview.glb",
+          "placement": {
+            "units": "m",
+            "upAxis": "Y",
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "anchorMeters": [
+              306.1338233947754,
+              -19.902286529541016,
+              23.726017475128174
+            ],
+            "yawRadians": 0,
+            "altitudeDatum": "local-site-meters",
+            "mode": "inferred"
+          },
+          "minScreenCoverage": 0,
+          "bytes": 30288,
+          "sha256": "94278e3878dcee86ea06528794be4ed6e954ee15ab7df1323cd42bd88e9eabbb"
+        },
+        {
+          "id": "close",
+          "kind": "legacy",
+          "source": "src/models/practice.js",
+          "global": "PracticeModel",
+          "export": "createPracticeModel",
+          "minScreenCoverage": 0.045,
+          "maxDistanceMeters": 160
+        }
+      ],
+      "provenance": {
+        "sourceId": "legacy-model-envelope",
+        "license": "Project-authored estimated geometry; external source reuse rights must be checked separately",
+        "creator": "campus-project",
+        "tool": "Babylon NullEngine 9.29.0 + Campus triangle writer 1",
+        "settings": "existing alignment, one primitive per material, no triangles deleted",
+        "sourceHash": "c91e6d34c0cab980ccb6871b035d5d32a0769ccb65baf1fbe2394ebc876a40d3"
+      }
+    },
+    {
+      "id": "hanul",
+      "legacyId": "hanul",
+      "kind": "legacy",
+      "global": "HanulModel",
+      "export": "createHanulModel",
+      "source": "src/models/hanul.js",
+      "status": "estimated",
+      "variants": [
+        {
+          "id": "overview",
+          "kind": "glb",
+          "source": "assets/models/generated/hanul-overview.glb",
+          "placement": {
+            "units": "m",
+            "upAxis": "Y",
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "anchorMeters": [
+              -315.62768936157227,
+              77.90571689605713,
+              18.222535848617554
+            ],
+            "yawRadians": 0,
+            "altitudeDatum": "local-site-meters",
+            "mode": "inferred"
+          },
+          "minScreenCoverage": 0,
+          "bytes": 31708,
+          "sha256": "a32ecb457f8604cc2b93d06feca103ba8dcdd2fe7c3cc77de7e98e5a458ade7e"
+        },
+        {
+          "id": "close",
+          "kind": "legacy",
+          "source": "src/models/hanul.js",
+          "global": "HanulModel",
+          "export": "createHanulModel",
+          "minScreenCoverage": 0.045,
+          "maxDistanceMeters": 160
+        }
+      ],
+      "provenance": {
+        "sourceId": "legacy-model-envelope",
+        "license": "Project-authored estimated geometry; external source reuse rights must be checked separately",
+        "creator": "campus-project",
+        "tool": "Babylon NullEngine 9.29.0 + Campus triangle writer 1",
+        "settings": "existing alignment, one primitive per material, no triangles deleted",
+        "sourceHash": "f358e62a668b5e1a1aac1f87ac53d0e8acc98f4f207dc0300d66238abb4814e5"
+      }
+    },
+    {
+      "id": "seongbin",
+      "legacyId": "seongbin",
+      "kind": "legacy",
+      "global": "SeongbinModel",
+      "export": "createSeongbinModel",
+      "source": "src/models/seongbin.js",
+      "status": "estimated",
+      "variants": [
+        {
+          "id": "overview",
+          "kind": "glb",
+          "source": "assets/models/generated/seongbin-overview.glb",
+          "placement": {
+            "units": "m",
+            "upAxis": "Y",
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "anchorMeters": [
+              -438.59779357910156,
+              141.4022922515869,
+              3.1736326217651367
+            ],
+            "yawRadians": 0,
+            "altitudeDatum": "local-site-meters",
+            "mode": "inferred"
+          },
+          "minScreenCoverage": 0,
+          "bytes": 88512,
+          "sha256": "6e152e710a62525e4cf77befe9a8f27063d157452109a0a19d8f18c14a19df83"
+        },
+        {
+          "id": "close",
+          "kind": "legacy",
+          "source": "src/models/seongbin.js",
+          "global": "SeongbinModel",
+          "export": "createSeongbinModel",
+          "minScreenCoverage": 0.045,
+          "maxDistanceMeters": 160
+        }
+      ],
+      "provenance": {
+        "sourceId": "legacy-model-envelope",
+        "license": "Project-authored estimated geometry; external source reuse rights must be checked separately",
+        "creator": "campus-project",
+        "tool": "Babylon NullEngine 9.29.0 + Campus triangle writer 1",
+        "settings": "existing alignment, one primitive per material, no triangles deleted",
+        "sourceHash": "f09f1d7d5e38bff389149b6430269641ac90e7d52fe30eb79722e1f3dbc43a43"
+      }
+    },
+    {
+      "id": "saerom",
+      "legacyId": "saerom",
+      "kind": "legacy",
+      "global": "SaeromModel",
+      "export": "createSaeromModel",
+      "source": "src/models/saerom.js",
+      "status": "estimated",
+      "variants": [
+        {
+          "id": "overview",
+          "kind": "glb",
+          "source": "assets/models/generated/saerom-overview.glb",
+          "placement": {
+            "units": "m",
+            "upAxis": "Y",
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "anchorMeters": [
+              73.32054138183594,
+              -31.979854106903076,
+              48.30609321594238
+            ],
+            "yawRadians": 0,
+            "altitudeDatum": "local-site-meters",
+            "mode": "inferred"
+          },
+          "minScreenCoverage": 0,
+          "bytes": 22344,
+          "sha256": "e5f037bcfb3b72222ed42a7e7ba98744ca693ec4266d80c06125582aed5afec6"
+        },
+        {
+          "id": "close",
+          "kind": "legacy",
+          "source": "src/models/saerom.js",
+          "global": "SaeromModel",
+          "export": "createSaeromModel",
+          "minScreenCoverage": 0.045,
+          "maxDistanceMeters": 160
+        }
+      ],
+      "provenance": {
+        "sourceId": "legacy-model-envelope",
+        "license": "Project-authored estimated geometry; external source reuse rights must be checked separately",
+        "creator": "campus-project",
+        "tool": "Babylon NullEngine 9.29.0 + Campus triangle writer 1",
+        "settings": "existing alignment, one primitive per material, no triangles deleted",
+        "sourceHash": "bad31be811112f888180686cfcf51494134f6f583ce0d728aa973c4943e10bbe"
+      }
+    },
+    {
+      "id": "haeoreum",
+      "legacyId": "haeoreum",
+      "kind": "legacy",
+      "global": "HaeoreumModel",
+      "export": "createHaeoreumModel",
+      "source": "src/models/haeoreum.js",
+      "status": "estimated",
+      "variants": [
+        {
+          "id": "overview",
+          "kind": "glb",
+          "source": "assets/models/generated/haeoreum-overview.glb",
+          "placement": {
+            "units": "m",
+            "upAxis": "Y",
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "anchorMeters": [
+              -70.83884716033936,
+              75.49456119537354,
+              8.701403141021729
+            ],
+            "yawRadians": 0,
+            "altitudeDatum": "local-site-meters",
+            "mode": "inferred"
+          },
+          "minScreenCoverage": 0,
+          "bytes": 43976,
+          "sha256": "be91595e94c08a06ff9edb0c755511784534157aa5433800006f2f6a67c44dcc"
+        },
+        {
+          "id": "close",
+          "kind": "legacy",
+          "source": "src/models/haeoreum.js",
+          "global": "HaeoreumModel",
+          "export": "createHaeoreumModel",
+          "minScreenCoverage": 0.045,
+          "maxDistanceMeters": 160
+        }
+      ],
+      "provenance": {
+        "sourceId": "legacy-model-envelope",
+        "license": "Project-authored estimated geometry; external source reuse rights must be checked separately",
+        "creator": "campus-project",
+        "tool": "Babylon NullEngine 9.29.0 + Campus triangle writer 1",
+        "settings": "existing alignment, one primitive per material, no triangles deleted",
+        "sourceHash": "5502a2bf6166580237d69450aef5ebfd19d372f52782325c6cc813f0194e84bd"
+      }
+    },
+    {
+      "id": "joonha",
+      "legacyId": "joonha",
+      "kind": "legacy",
+      "global": "JoonhaModel",
+      "export": "createJoonhaModel",
+      "source": "src/models/joonha.js",
+      "status": "estimated",
+      "variants": [
+        {
+          "id": "overview",
+          "kind": "glb",
+          "source": "assets/models/generated/joonha-overview.glb",
+          "placement": {
+            "units": "m",
+            "upAxis": "Y",
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "anchorMeters": [
+              345.00858306884766,
+              -89.37261581420898,
+              52.92836666107178
+            ],
+            "yawRadians": 0,
+            "altitudeDatum": "local-site-meters",
+            "mode": "inferred"
+          },
+          "minScreenCoverage": 0,
+          "bytes": 61976,
+          "sha256": "5e7ab30d38506b19dcc98b40e7cb73a9bd5c7b03b93631ec9f4fc404244af3c6"
+        },
+        {
+          "id": "close",
+          "kind": "legacy",
+          "source": "src/models/joonha.js",
+          "global": "JoonhaModel",
+          "export": "createJoonhaModel",
+          "minScreenCoverage": 0.045,
+          "maxDistanceMeters": 160
+        }
+      ],
+      "provenance": {
+        "sourceId": "legacy-model-envelope",
+        "license": "Project-authored estimated geometry; external source reuse rights must be checked separately",
+        "creator": "campus-project",
+        "tool": "Babylon NullEngine 9.29.0 + Campus triangle writer 1",
+        "settings": "existing alignment, one primitive per material, no triangles deleted",
+        "sourceHash": "2938bca349791b854d93656334ff1e11b8ca6263f305a2798ae04eb32ff7b24f"
+      }
+    },
+    {
+      "id": "neutbom",
+      "legacyId": "neutbom",
+      "kind": "legacy",
+      "global": "NeutbomModel",
+      "export": "createNeutbomModel",
+      "source": "src/models/neutbom.js",
+      "status": "estimated",
+      "variants": [
+        {
+          "id": "overview",
+          "kind": "glb",
+          "source": "assets/models/generated/neutbom-overview.glb",
+          "placement": {
+            "units": "m",
+            "upAxis": "Y",
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "anchorMeters": [
+              22.81796932220459,
+              -64.2249870300293,
+              89.18909072875977
+            ],
+            "yawRadians": 0,
+            "altitudeDatum": "local-site-meters",
+            "mode": "inferred"
+          },
+          "minScreenCoverage": 0,
+          "bytes": 65548,
+          "sha256": "92564da8f841829f9b54c31932f1021dfc80997996803c4cda76e6963489ed5b"
+        },
+        {
+          "id": "close",
+          "kind": "legacy",
+          "source": "src/models/neutbom.js",
+          "global": "NeutbomModel",
+          "export": "createNeutbomModel",
+          "minScreenCoverage": 0.045,
+          "maxDistanceMeters": 160
+        }
+      ],
+      "provenance": {
+        "sourceId": "legacy-model-envelope",
+        "license": "Project-authored estimated geometry; external source reuse rights must be checked separately",
+        "creator": "campus-project",
+        "tool": "Babylon NullEngine 9.29.0 + Campus triangle writer 1",
+        "settings": "existing alignment, one primitive per material, no triangles deleted",
+        "sourceHash": "20825d1f84752b9e2ac0c9ac9dcefba566b18cf8dbded632f37c356d3550fcc2"
+      }
+    },
+    {
+      "id": "childcare",
+      "legacyId": "childcare",
+      "kind": "legacy",
+      "global": "ChildcareModel",
+      "export": "createChildcareModel",
+      "source": "src/models/childcare.js",
+      "status": "estimated",
+      "variants": [
+        {
+          "id": "overview",
+          "kind": "glb",
+          "source": "assets/models/generated/childcare-overview.glb",
+          "placement": {
+            "units": "m",
+            "upAxis": "Y",
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "anchorMeters": [
+              457.8369140625,
+              -164.6318817138672,
+              44.188528060913086
+            ],
+            "yawRadians": 0,
+            "altitudeDatum": "local-site-meters",
+            "mode": "inferred"
+          },
+          "minScreenCoverage": 0,
+          "bytes": 32828,
+          "sha256": "e8c4e857f99e3e2b8a84fe91d7fb3e7387fb411756f41d139c3efc3514186c4d"
+        },
+        {
+          "id": "close",
+          "kind": "legacy",
+          "source": "src/models/childcare.js",
+          "global": "ChildcareModel",
+          "export": "createChildcareModel",
+          "minScreenCoverage": 0.045,
+          "maxDistanceMeters": 160
+        }
+      ],
+      "provenance": {
+        "sourceId": "legacy-model-envelope",
+        "license": "Project-authored estimated geometry; external source reuse rights must be checked separately",
+        "creator": "campus-project",
+        "tool": "Babylon NullEngine 9.29.0 + Campus triangle writer 1",
+        "settings": "existing alignment, one primitive per material, no triangles deleted",
+        "sourceHash": "a10c3e8c52565edcc2d15a1c9ed13426514ab62c4b0abe21ebb08e85f03d2c54"
+      }
+    }
+  ]
+}

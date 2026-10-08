@@ -3,10 +3,15 @@
     "target": "ES2020",
     "module": "ES2020",
     "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "lib": ["ES2020", "DOM"],
+    "types": ["node"],
+    "skipLibCheck": true,
     "allowJs": true,
     "checkJs": false,
     "strict": true,
     "noEmit": true
   },
-  "include": ["src/**/*.ts", "src/**/*.js"]
+  "include": ["src/**/*.ts", "src/**/*.js", "server/**/*.ts"]
 }

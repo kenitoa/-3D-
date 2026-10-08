@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "campusId": "hanshin-gg",
+  "name": "한신대학교 경기캠퍼스",
+  "address": "경기도 오산시 한신대길 137",
+  "sourceId": "hanshin-official-tour",
+  "legacyBuildingIds": ["janggong", "pilheon", "manwoo", "shalom", "immanuel", "gyeongsam", "songam", "sotong", "practice", "hanul", "seongbin", "saerom", "haeoreum", "joonha", "neutbom", "childcare"],
+  "identityPolicy": "영구 ID와 표시 이름을 분리한다. 기존 모델 legacyId는 대응 키이며 GIS/BIM 외부 ID와 구분한다. 추가 캠퍼스는 독립된 출처·원점·경계 자료를 검증한 뒤 등록한다."
+}

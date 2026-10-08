@@ -1,0 +1,7 @@
+{
+  "elapsedMs": 692.4000000953674,
+  "renderedFrames": 10,
+  "meshCount": 668,
+  "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "evidenceLimit": "Headless Chromium software rendering; not a real device performance guarantee."
+}

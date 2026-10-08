@@ -1,0 +1,9 @@
+# Optional offline asset-production environment; never imported by the web/API runtime.
+ifcopenshell==0.8.4.post1
+isodate==0.7.2
+lark==1.3.1
+numpy==2.5.3
+python-dateutil==2.9.0.post0
+shapely==2.2.0
+six==1.17.0
+typing-extensions==4.16.0

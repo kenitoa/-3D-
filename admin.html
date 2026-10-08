@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#173625">
+  <title>한신대학교 조감도 · 담당자 관리</title>
+  <link rel="stylesheet" href="styles/admin.css">
+  <script defer src="src/domain/campus-platform.js"></script>
+  <script defer src="src/domain/refinement.js"></script>
+  <script defer src="vendor/babylon.js"></script>
+  <script defer src="vendor/babylonjs.loaders.min.js"></script>
+  <script defer src="src/ui/refinement-scene-preview.js"></script>
+  <script defer src="src/ui/admin.js"></script>
+</head>
+<body data-admin-auto="true">
+  <a class="admin-skip" href="#adminMain">관리 내용으로 이동</a>
+  <header class="admin-header"><div><h1>공간 자료 관리</h1><p>한신대학교 조감도 · 변경·검토·공개·복구</p></div><a href="index.html">전체 조감도</a></header>
+  <main id="adminMain" tabindex="-1">
+    <p class="admin-status" id="adminMessage" role="status" aria-live="polite">서버 연결과 세션을 확인합니다…</p>
+    <section class="admin-card" id="adminLogin"><h2>담당자 로그인</h2><p>발급된 계정을 사용합니다. 기본 계정·비밀번호는 제공하지 않습니다.</p>
+      <form id="adminLoginForm"><label>사용자 이름<input id="adminUsername" autocomplete="username" maxlength="64" required></label><label>비밀번호<input id="adminPassword" type="password" autocomplete="current-password" maxlength="256" required></label><button type="submit">로그인</button></form>
+      <button id="adminReconnect" type="button">서버 연결 다시 확인</button><p id="adminSetupNote"></p>
+    </section>
+    <section id="adminWorkspace" hidden>
+      <div class="admin-session"><p id="adminIdentity"></p><div><button id="adminRefresh" type="button">최신 상태 확인</button><button id="adminLogout" type="button">로그아웃</button></div></div>
+      <section class="admin-card"><h2>운영 상태</h2><dl id="adminSummary"></dl><p id="adminScope"></p><ul id="adminIntegrations"></ul><h3>등록된 자료 연동</h3><p>서버에 미리 등록된 연동만 가져올 수 있습니다. 가져온 자료는 검토할 초안으로 저장하며 자동 공개하지 않습니다.</p><ul class="admin-records" id="adminProviders"></ul></section>
+      <div class="admin-grid">
+        <section class="admin-card"><h2>초안 작성·검토</h2><p>변경 자료는 초안 저장 후 제출합니다. 검토·공개 권한과 담당 캠퍼스 범위는 서버에서도 확인합니다.</p>
+          <label>등록된 초안<select id="adminDraftSelect"><option value="">새 초안</option></select></label><button type="button" id="adminLoadDraft">선택 초안 불러오기</button><p id="adminDraftInfo"></p>
+          <p id="adminCatalogPermission" role="status"></p><form id="adminDraftForm"><label>변경 요약<input id="adminDraftSummary" maxlength="500" required></label><p>자료를 변경하면 JSON의 contentVersion에 새 고유 버전을 입력하고 datasetVersion도 같은 값으로 맞춰 주세요. assetsVersion은 모델 자산 변경이 있을 때 갱신합니다.</p><label>Catalog JSON<textarea id="adminCatalog" spellcheck="false" required></textarea></label><label>Catalog JSON 파일<input id="adminCatalogFile" type="file" accept="application/json,.json"></label>
+            <div class="admin-actions"><button type="button" id="adminUseCurrent">최신 자료로 새 초안 준비</button><button type="button" id="adminValidate">자료 검증·차이 확인</button><button type="submit" id="adminSaveDraft">초안 저장</button></div>
+          </form><ul id="adminValidation"></ul><ul id="adminDiff"></ul>
+          <div class="admin-actions"><button type="button" data-draft-action="submit">검토 제출</button><button type="button" data-draft-action="approve">승인</button><button type="button" data-draft-action="reject">반려</button><button type="button" id="adminPublish">승인한 초안 공개</button></div>
+        </section>
+        <section class="admin-card"><h2>공개판·복구</h2><p>공개판 전체를 버전 단위로 복구합니다. 복구는 관리자 권한으로만 수행합니다.</p><ul class="admin-records" id="adminReleases"></ul></section>
+      </div>
+      <div class="admin-grid">
+        <section class="admin-card"><h2>지도·시설 제보</h2><label>접수<select id="adminReportSelect"></select></label><button type="button" id="adminLoadReport">접수 내용 확인</button><section id="adminReportDetail"></section>
+          <form id="adminReportForm"><label>처리 상태<select id="adminReportStatus"><option value="received">접수</option><option value="reviewing">검토 중</option><option value="resolved">처리 완료</option><option value="rejected">반려</option></select></label><label>처리 내용<textarea id="adminReportNote" maxlength="1000"></textarea></label><button type="submit" id="adminSaveReport">처리 상태 저장</button></form>
+          <p>첨부 사진은 권한 있는 담당자의 비공개 검토용입니다. 접수만으로 지도에 반영하지 않습니다.</p>
+        </section>
+        <section class="admin-card"><h2>운영·공사 상태</h2><p>운영기간과 출처를 지정합니다. 기존 기록을 선택하면 기간 연장이나 상태 변경을 저장할 수 있습니다. 취소 상태도 같은 기록의 변경으로 남습니다. 기간이 지난 안내는 유효한 열림·통행 정보로 표시하지 않습니다.</p><button type="button" id="adminNewOperation">새 운영 기록 작성</button><p id="adminOperationInfo" role="status">새 운영 기록</p>
+          <form id="adminOperationForm"><label>공간<select id="adminOperationEntity" required></select></label><label>안내 제목<input id="adminOperationTitle" maxlength="200" required></label><label>관리 부서<input id="adminOperationOwner" maxlength="100" required></label>
+            <label>상태<select id="adminOperationStatus"><option value="unknown">미확인</option><option value="open">열림</option><option value="closed">닫힘</option><option value="restricted">이용 제한</option><option value="construction">공사</option><option value="cancelled">취소</option></select></label>
+            <label>시작 · 기기 현지 시각<input id="adminOperationStart" type="datetime-local" required></label><label>종료 · 기기 현지 시각<input id="adminOperationEnd" type="datetime-local" required></label><label>등록된 출처<select id="adminOperationSource" required></select></label>
+            <label>공개 범위<select id="adminOperationVisibility"><option value="public">공개</option><option value="restricted">담당자 제한</option></select></label><button type="submit" id="adminSaveOperation">검토한 운영 정보 공개·저장</button>
+          </form><ul class="admin-records" id="adminOperations"></ul>
+        </section>
+      </div>
+    </section>
+  </main><noscript><p>관리 화면에는 JavaScript와 인증된 API 서버가 필요합니다. 전체 조감도는 <a href="index.html">여기에서</a> 확인할 수 있습니다.</p></noscript>
+</body>
+</html>

@@ -1,0 +1,74 @@
+{
+  "generatedAt": "2026-10-07T12:35:12.252Z",
+  "referenceDate": "2026-10-07",
+  "officialHtmlSha256": "aadbbeaa1b675252d386376f0c7071c39053c08087a3a9574f24187b4f7b2dbb",
+  "sources": [
+    {
+      "id": "hanshin-official-tour",
+      "title": "한신대학교 공식 캠퍼스투어 안내 마커",
+      "url": "https://www.hs.ac.kr/kor/4891/subview.do",
+      "date": "2026-10-07",
+      "scope": "현재 건물명과 공개 지도 안내 마커 15개. 마커 작성일·측량 정확도 미제공.",
+      "confidence": "verified",
+      "localFile": "evidence/official-campus-markers.json",
+      "usage": "사실 정보 추출 및 출처 표시. 사진은 원문 링크만 제공하며 재배포하지 않음."
+    },
+    {
+      "id": "osm-2026-05-11",
+      "title": "기존 OSM 도로·보행로 기록",
+      "url": "https://www.openstreetmap.org/copyright",
+      "date": "2026-05-11",
+      "scope": "기존 campus-data.js의 OSM way ID와 반올림된 변환 선형을 역변환. 원본 node ID·폭·최신 변경 미검증.",
+      "confidence": "mapped",
+      "localFile": "evidence/legacy-spatial-snapshot.json",
+      "usage": "© OpenStreetMap contributors, ODbL 1.0. 파생 공간 데이터의 출처 및 라이선스 유지."
+    },
+    {
+      "id": "legacy-capture",
+      "title": "기존 제공 지도 기반 모델링 영역",
+      "url": "",
+      "date": "2026-05-11",
+      "scope": "기존 campusBoundary 모델링 폴리곤. 원본 지도 캡처·지적 경계 좌표 없음.",
+      "confidence": "estimated",
+      "usage": "프로젝트의 기존 추정 모델 데이터이며 공적 경계 자료가 아님."
+    },
+    {
+      "id": "legacy-model-envelope",
+      "title": "기존 상세 모델의 공간 추정",
+      "url": "",
+      "date": "2026-10-07",
+      "scope": "기존 exclusion envelope, 지형 패치, 진입 방향·운동장 앵커. 실제 footprint/시설 외곽 미확인.",
+      "confidence": "estimated",
+      "usage": "표시용 개념 모델. 측량·면적·출입구 확정 자료로 사용하지 않음."
+    },
+    {
+      "id": "hanshin-2026-guide-illustration",
+      "title": "2026학년도 공식 모집요강 캠퍼스 안내 삽화",
+      "url": "https://ent.hs.ac.kr/upload_data/mojib/RF%280%29_250915165048.pdf",
+      "date": "2026-10-07",
+      "scope": "PDF 38~39페이지 조감 삽화의 운동장·테니스·주차 29/30/31·공원·연못·출입구를 직접 검토 후 픽셀 관찰. 정사영상이나 측량도면 아님.",
+      "confidence": "estimated",
+      "localFile": "evidence/campus-map-digitization.json",
+      "usage": "시설의 사실 정보·관찰 좌표와 출처만 앱에 포함. 원본 PDF·렌더 이미지는 로컬 검토 자료이며 배포 대상에서 제외."
+    },
+    {
+      "id": "eum-2021-54",
+      "title": "오산시 고시 제2021-54호",
+      "url": "https://www.eum.go.kr/web/gs/gv/gvGosiDet.jsp?seq=502075&mobile_yn=",
+      "date": "2021-03-22",
+      "scope": "도시계획시설 한신대학교 결정 변경 및 지형도면 고시 존재 확인. 첨부 도면·최신 변경·소유권 미검증.",
+      "confidence": "verified",
+      "usage": "공적 경계 확인을 위한 참고 링크. 도면 좌표 미확보."
+    }
+  ],
+  "accessFailures": [
+    "Overpass main: HTTP 504 then 406",
+    "Overpass kumi: timeout",
+    "OSM API map and full way: HTTP 429"
+  ],
+  "usage": [
+    "OSM derivative data: OpenStreetMap contributors / ODbL 1.0.",
+    "Official website photo links are references only; photos not redistributed.",
+    "Only needed public guide source fragment and fact extraction retained."
+  ]
+}

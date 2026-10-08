@@ -1,0 +1,1342 @@
+{
+  "checkedAt": "2026-10-08T14:04:29.218Z",
+  "url": "http://127.0.0.1:8765/",
+  "softwareWebGL": true,
+  "realDevice": false,
+  "errors": [],
+  "captures": [
+    {
+      "name": "desktop",
+      "viewport": {
+        "x": 0,
+        "y": 0.055,
+        "width": 0.7722222222222223,
+        "height": 0.8543125
+      },
+      "errors": [],
+      "state": {
+        "schemaVersion": 1,
+        "campusId": "hanshin-gg",
+        "datasetVersion": "hanshin-gg-2026-10-07-1",
+        "contentVersion": "hanshin-gg-2026-10-07-1",
+        "assetsVersion": "2026-10-07-refinement-lod-1",
+        "releaseId": "0d7204f2-1fc7-4b64-91da-2310e346f0d0",
+        "sharedStatus": "",
+        "refinement": {
+          "purpose": "visitor",
+          "reducedMotion": true,
+          "vrMovement": "teleport",
+          "vrTurn": "snap",
+          "eyeHeightMeters": 1.6
+        },
+        "diagnostics": {
+          "meshCount": 667,
+          "drawCalls": 611,
+          "triangles": 54726,
+          "fps": 12.09256307323425,
+          "measuredRenderMs": 17.845142529964733,
+          "frameP95Ms": 176.80000007152557,
+          "loadedDetails": 16,
+          "lod": {
+            "manwoo": "overview",
+            "janggong": "overview",
+            "hanul": "overview",
+            "joonha": "overview",
+            "neutbom": "overview",
+            "songam": "overview",
+            "gyeongsam": "overview",
+            "shalom": "overview",
+            "seongbin": "overview",
+            "sotong": "overview",
+            "childcare": "overview",
+            "practice": "overview",
+            "haeoreum": "overview",
+            "immanuel": "overview",
+            "pilheon": "overview",
+            "saerom": "overview"
+          },
+          "residentBytes": 699688,
+          "resources": {
+            "textures": 2,
+            "materials": 322
+          },
+          "measurement": {
+            "theme": {
+              "theme": "default",
+              "at": "2026-10-08T14:04:21.649Z",
+              "items": [],
+              "legend": [],
+              "unavailable": 0,
+              "note": "표식은 등록 대상의 위치를 안내합니다. 실제 공사 면적·통행 가능성·실측 경계를 확정하지 않습니다."
+            },
+            "lighting": "guide",
+            "lightingIsSolarAnalysis": false,
+            "floor": {
+              "applied": true,
+              "reason": "외관을 표시합니다.",
+              "floorId": null,
+              "mode": "exterior",
+              "meshCount": 0
+            },
+            "measurement": null,
+            "overlayMeshCount": 0,
+            "clonedMaterialCount": 0,
+            "disposed": false
+          },
+          "renderer": "WebGL",
+          "timing": "browser-frame-interval-and-cpu-render"
+        },
+        "view": "overview",
+        "selectedId": null,
+        "layers": {
+          "boundary": true,
+          "buildings": true,
+          "roads": true,
+          "paths": true,
+          "parking": true,
+          "sports": true,
+          "greenery": true,
+          "trees": true,
+          "water": true,
+          "entrances": true,
+          "context": true,
+          "labels": true,
+          "contours": false
+        },
+        "floor": null,
+        "floorId": null,
+        "quality": "auto",
+        "exaggeration": 1,
+        "camera": {
+          "view": "overview",
+          "alpha": 1.15,
+          "beta": 0.6,
+          "radius": 114.14559459370628,
+          "target": [
+            -3.5147311768802645,
+            3.265282833981916,
+            -1.649663400148409
+          ],
+          "freePosition": [
+            -3.5147311768802645,
+            3.445282833981916,
+            2.350336599851591
+          ],
+          "freeRotation": [
+            0,
+            3.141592653589793,
+            0
+          ]
+        }
+      },
+      "diagnostics": {
+        "ready": true,
+        "view": "overview",
+        "layers": {
+          "boundary": true,
+          "buildings": true,
+          "roads": true,
+          "paths": true,
+          "parking": true,
+          "sports": true,
+          "greenery": true,
+          "trees": true,
+          "water": true,
+          "entrances": true,
+          "context": true,
+          "labels": true,
+          "contours": false
+        },
+        "selectedId": null,
+        "exaggeration": 1,
+        "quality": "auto",
+        "effectiveQuality": "high",
+        "campusId": "hanshin-gg",
+        "catalogVersion": "hanshin-gg-2026-10-07-1",
+        "assetsVersion": "2026-10-07-refinement-lod-1",
+        "releaseId": "0d7204f2-1fc7-4b64-91da-2310e346f0d0",
+        "modelLoader": {
+          "registered": 16,
+          "loaded": 16,
+          "pending": 0,
+          "active": 0,
+          "queued": 0,
+          "residentBytes": 699688,
+          "maxConcurrent": 2,
+          "maxResidentModels": 24,
+          "maxResidentBytes": 134217728,
+          "minScreenCoverage": 0.003,
+          "evictions": 0,
+          "completed": 16,
+          "failed": 0,
+          "variants": {
+            "manwoo": "overview",
+            "janggong": "overview",
+            "hanul": "overview",
+            "joonha": "overview",
+            "neutbom": "overview",
+            "songam": "overview",
+            "gyeongsam": "overview",
+            "shalom": "overview",
+            "seongbin": "overview",
+            "sotong": "overview",
+            "childcare": "overview",
+            "practice": "overview",
+            "haeoreum": "overview",
+            "immanuel": "overview",
+            "pilheon": "overview",
+            "saerom": "overview"
+          },
+          "states": {
+            "manwoo": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "janggong": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "hanul": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "joonha": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "neutbom": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "songam": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "gyeongsam": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "shalom": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "seongbin": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "sotong": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "childcare": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "practice": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "haeoreum": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "immanuel": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "pilheon": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "saerom": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            }
+          },
+          "disposed": false
+        },
+        "meshCount": 667,
+        "drawCalls": 611,
+        "triangles": 54726,
+        "fps": 12.09256307323425,
+        "measuredRenderMs": 17.845142529964733,
+        "frameP95Ms": 176.80000007152557,
+        "loadedDetails": 16,
+        "lod": {
+          "manwoo": "overview",
+          "janggong": "overview",
+          "hanul": "overview",
+          "joonha": "overview",
+          "neutbom": "overview",
+          "songam": "overview",
+          "gyeongsam": "overview",
+          "shalom": "overview",
+          "seongbin": "overview",
+          "sotong": "overview",
+          "childcare": "overview",
+          "practice": "overview",
+          "haeoreum": "overview",
+          "immanuel": "overview",
+          "pilheon": "overview",
+          "saerom": "overview"
+        },
+        "residentBytes": 699688,
+        "resources": {
+          "textures": 2,
+          "materials": 322
+        },
+        "measurement": {
+          "theme": {
+            "theme": "default",
+            "at": "2026-10-08T14:04:21.649Z",
+            "items": [],
+            "legend": [],
+            "unavailable": 0,
+            "note": "표식은 등록 대상의 위치를 안내합니다. 실제 공사 면적·통행 가능성·실측 경계를 확정하지 않습니다."
+          },
+          "lighting": "guide",
+          "lightingIsSolarAnalysis": false,
+          "floor": {
+            "applied": true,
+            "reason": "외관을 표시합니다.",
+            "floorId": null,
+            "mode": "exterior",
+            "meshCount": 0
+          },
+          "measurement": null,
+          "overlayMeshCount": 0,
+          "clonedMaterialCount": 0,
+          "disposed": false
+        },
+        "renderer": "WebGL",
+        "timing": "browser-frame-interval-and-cpu-render",
+        "errors": [],
+        "boundaryAreaMeters2": 149181.50265077694,
+        "boundaryAreaMeaning": "estimated-guide-area-not-legal-area",
+        "campusPartCount": 1,
+        "metersPerUnit": 10,
+        "verticalExaggeration": 1,
+        "estimatedTerrain": true,
+        "legalBoundaryAvailable": false,
+        "boundaryLegend": [
+          {
+            "type": "guide",
+            "name": "안내 영역",
+            "pattern": "dash",
+            "color": "#285940",
+            "available": true,
+            "sourceId": "legacy-capture",
+            "status": "estimated",
+            "legal": false
+          },
+          {
+            "type": "legal",
+            "name": "소유 경계",
+            "pattern": "solid",
+            "color": "#623d4f",
+            "available": false,
+            "sourceId": null,
+            "status": "unavailable",
+            "legal": true
+          },
+          {
+            "type": "planning",
+            "name": "계획 경계",
+            "pattern": "dash-dot",
+            "color": "#8c6926",
+            "available": false,
+            "sourceId": null,
+            "status": "unavailable",
+            "legal": false
+          },
+          {
+            "type": "cadastral",
+            "name": "지적 경계",
+            "pattern": "dot",
+            "color": "#456779",
+            "available": false,
+            "sourceId": null,
+            "status": "unavailable",
+            "legal": false
+          }
+        ],
+        "interactionCount": 0,
+        "observationIsVerifiedRoute": false,
+        "hierarchy": {
+          "campus": "primary",
+          "context": "background",
+          "essentialLayers": [
+            "boundary",
+            "buildings",
+            "entrances"
+          ]
+        },
+        "batching": {
+          "sourceMeshes": 0,
+          "mergedMeshes": 0,
+          "removedMeshes": 0
+        },
+        "sceneMeshCount": 667,
+        "layerCounts": {
+          "terrain": 1,
+          "boundary": 171,
+          "buildings": 208,
+          "roads": 28,
+          "paths": 58,
+          "parking": 30,
+          "sports": 9,
+          "greenery": 4,
+          "trees": 88,
+          "contours": 9,
+          "water": 2,
+          "entrances": 35,
+          "context": 24
+        }
+      },
+      "models": 16,
+      "boundaryFits": true,
+      "projectedBoundary": [
+        {
+          "x": 260.09084414957954,
+          "y": 264.0521519411924,
+          "depth": 0.99978581993581
+        },
+        {
+          "x": 277.5892216019732,
+          "y": 322.607141568834,
+          "depth": 0.9997753545813055
+        },
+        {
+          "x": 300.9637486953376,
+          "y": 345.30842942837023,
+          "depth": 0.9997699409296369
+        },
+        {
+          "x": 487.4049711613637,
+          "y": 486.97108328703337,
+          "depth": 0.9997268639133833
+        },
+        {
+          "x": 958.1923105254723,
+          "y": 808.6806881773454,
+          "depth": 0.9996791958707891
+        },
+        {
+          "x": 998.9364300287122,
+          "y": 832.424374064456,
+          "depth": 0.9996749326629317
+        },
+        {
+          "x": 867.7717061082255,
+          "y": 644.0577236957445,
+          "depth": 0.9997145588062847
+        },
+        {
+          "x": 754.7866873965721,
+          "y": 508.70054523142113,
+          "depth": 0.999741512420147
+        },
+        {
+          "x": 746.4509283744903,
+          "y": 499.9606040613122,
+          "depth": 0.9997430325954557
+        },
+        {
+          "x": 729.902440098888,
+          "y": 488.4578434591345,
+          "depth": 0.9997450332789958
+        },
+        {
+          "x": 379.8492120267296,
+          "y": 302.29304265471035,
+          "depth": 0.9997794221016572
+        },
+        {
+          "x": 282.85813685075914,
+          "y": 266.301370230292,
+          "depth": 0.9997854320094981
+        }
+      ]
+    },
+    {
+      "name": "mobile",
+      "viewport": {
+        "x": 0,
+        "y": 0.06516587677725119,
+        "width": 1,
+        "height": 0.7748815165876777
+      },
+      "errors": [],
+      "state": {
+        "schemaVersion": 1,
+        "campusId": "hanshin-gg",
+        "datasetVersion": "hanshin-gg-2026-10-07-1",
+        "contentVersion": "hanshin-gg-2026-10-07-1",
+        "assetsVersion": "2026-10-07-refinement-lod-1",
+        "releaseId": "0d7204f2-1fc7-4b64-91da-2310e346f0d0",
+        "sharedStatus": "",
+        "refinement": {
+          "purpose": "visitor",
+          "reducedMotion": true,
+          "vrMovement": "teleport",
+          "vrTurn": "snap",
+          "eyeHeightMeters": 1.6
+        },
+        "diagnostics": {
+          "meshCount": 667,
+          "drawCalls": 611,
+          "triangles": 54726,
+          "fps": 16.44982802481845,
+          "measuredRenderMs": 14.446975290137125,
+          "frameP95Ms": 126.79999995231628,
+          "loadedDetails": 16,
+          "lod": {
+            "manwoo": "overview",
+            "janggong": "overview",
+            "hanul": "overview",
+            "joonha": "overview",
+            "gyeongsam": "overview",
+            "songam": "overview",
+            "seongbin": "overview",
+            "neutbom": "overview",
+            "shalom": "overview",
+            "sotong": "overview",
+            "childcare": "overview",
+            "haeoreum": "overview",
+            "practice": "overview",
+            "immanuel": "overview",
+            "pilheon": "overview",
+            "saerom": "overview"
+          },
+          "residentBytes": 699688,
+          "resources": {
+            "textures": 2,
+            "materials": 322
+          },
+          "measurement": {
+            "theme": {
+              "theme": "default",
+              "at": "2026-10-08T14:04:27.572Z",
+              "items": [],
+              "legend": [],
+              "unavailable": 0,
+              "note": "표식은 등록 대상의 위치를 안내합니다. 실제 공사 면적·통행 가능성·실측 경계를 확정하지 않습니다."
+            },
+            "lighting": "guide",
+            "lightingIsSolarAnalysis": false,
+            "floor": {
+              "applied": true,
+              "reason": "외관을 표시합니다.",
+              "floorId": null,
+              "mode": "exterior",
+              "meshCount": 0
+            },
+            "measurement": null,
+            "overlayMeshCount": 0,
+            "clonedMaterialCount": 0,
+            "disposed": false
+          },
+          "renderer": "WebGL",
+          "timing": "browser-frame-interval-and-cpu-render"
+        },
+        "view": "overview",
+        "selectedId": null,
+        "layers": {
+          "boundary": true,
+          "buildings": true,
+          "roads": true,
+          "paths": true,
+          "parking": true,
+          "sports": true,
+          "greenery": true,
+          "trees": true,
+          "water": true,
+          "entrances": true,
+          "context": true,
+          "labels": true,
+          "contours": false
+        },
+        "floor": null,
+        "floorId": null,
+        "quality": "auto",
+        "exaggeration": 1,
+        "camera": {
+          "view": "overview",
+          "alpha": 1.15,
+          "beta": 0.6,
+          "radius": 220.49323044303614,
+          "target": [
+            -3.5147311768802645,
+            3.265282833981916,
+            -1.649663400148409
+          ],
+          "freePosition": [
+            -3.5147311768802645,
+            3.445282833981916,
+            2.350336599851591
+          ],
+          "freeRotation": [
+            0,
+            3.141592653589793,
+            0
+          ]
+        }
+      },
+      "diagnostics": {
+        "ready": true,
+        "view": "overview",
+        "layers": {
+          "boundary": true,
+          "buildings": true,
+          "roads": true,
+          "paths": true,
+          "parking": true,
+          "sports": true,
+          "greenery": true,
+          "trees": true,
+          "water": true,
+          "entrances": true,
+          "context": true,
+          "labels": true,
+          "contours": false
+        },
+        "selectedId": null,
+        "exaggeration": 1,
+        "quality": "auto",
+        "effectiveQuality": "high",
+        "campusId": "hanshin-gg",
+        "catalogVersion": "hanshin-gg-2026-10-07-1",
+        "assetsVersion": "2026-10-07-refinement-lod-1",
+        "releaseId": "0d7204f2-1fc7-4b64-91da-2310e346f0d0",
+        "modelLoader": {
+          "registered": 16,
+          "loaded": 16,
+          "pending": 0,
+          "active": 0,
+          "queued": 0,
+          "residentBytes": 699688,
+          "maxConcurrent": 2,
+          "maxResidentModels": 24,
+          "maxResidentBytes": 134217728,
+          "minScreenCoverage": 0.003,
+          "evictions": 0,
+          "completed": 16,
+          "failed": 0,
+          "variants": {
+            "manwoo": "overview",
+            "janggong": "overview",
+            "hanul": "overview",
+            "joonha": "overview",
+            "gyeongsam": "overview",
+            "songam": "overview",
+            "seongbin": "overview",
+            "neutbom": "overview",
+            "shalom": "overview",
+            "sotong": "overview",
+            "childcare": "overview",
+            "haeoreum": "overview",
+            "practice": "overview",
+            "immanuel": "overview",
+            "pilheon": "overview",
+            "saerom": "overview"
+          },
+          "states": {
+            "manwoo": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "janggong": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "hanul": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "joonha": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "gyeongsam": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "songam": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "seongbin": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "neutbom": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "shalom": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "sotong": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "childcare": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "haeoreum": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "practice": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "immanuel": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "pilheon": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            },
+            "saerom": {
+              "status": "ready",
+              "attempts": 1,
+              "variantId": "overview"
+            }
+          },
+          "disposed": false
+        },
+        "meshCount": 667,
+        "drawCalls": 611,
+        "triangles": 54726,
+        "fps": 16.44982802481845,
+        "measuredRenderMs": 14.446975290137125,
+        "frameP95Ms": 126.79999995231628,
+        "loadedDetails": 16,
+        "lod": {
+          "manwoo": "overview",
+          "janggong": "overview",
+          "hanul": "overview",
+          "joonha": "overview",
+          "gyeongsam": "overview",
+          "songam": "overview",
+          "seongbin": "overview",
+          "neutbom": "overview",
+          "shalom": "overview",
+          "sotong": "overview",
+          "childcare": "overview",
+          "haeoreum": "overview",
+          "practice": "overview",
+          "immanuel": "overview",
+          "pilheon": "overview",
+          "saerom": "overview"
+        },
+        "residentBytes": 699688,
+        "resources": {
+          "textures": 2,
+          "materials": 322
+        },
+        "measurement": {
+          "theme": {
+            "theme": "default",
+            "at": "2026-10-08T14:04:27.572Z",
+            "items": [],
+            "legend": [],
+            "unavailable": 0,
+            "note": "표식은 등록 대상의 위치를 안내합니다. 실제 공사 면적·통행 가능성·실측 경계를 확정하지 않습니다."
+          },
+          "lighting": "guide",
+          "lightingIsSolarAnalysis": false,
+          "floor": {
+            "applied": true,
+            "reason": "외관을 표시합니다.",
+            "floorId": null,
+            "mode": "exterior",
+            "meshCount": 0
+          },
+          "measurement": null,
+          "overlayMeshCount": 0,
+          "clonedMaterialCount": 0,
+          "disposed": false
+        },
+        "renderer": "WebGL",
+        "timing": "browser-frame-interval-and-cpu-render",
+        "errors": [],
+        "boundaryAreaMeters2": 149181.50265077694,
+        "boundaryAreaMeaning": "estimated-guide-area-not-legal-area",
+        "campusPartCount": 1,
+        "metersPerUnit": 10,
+        "verticalExaggeration": 1,
+        "estimatedTerrain": true,
+        "legalBoundaryAvailable": false,
+        "boundaryLegend": [
+          {
+            "type": "guide",
+            "name": "안내 영역",
+            "pattern": "dash",
+            "color": "#285940",
+            "available": true,
+            "sourceId": "legacy-capture",
+            "status": "estimated",
+            "legal": false
+          },
+          {
+            "type": "legal",
+            "name": "소유 경계",
+            "pattern": "solid",
+            "color": "#623d4f",
+            "available": false,
+            "sourceId": null,
+            "status": "unavailable",
+            "legal": true
+          },
+          {
+            "type": "planning",
+            "name": "계획 경계",
+            "pattern": "dash-dot",
+            "color": "#8c6926",
+            "available": false,
+            "sourceId": null,
+            "status": "unavailable",
+            "legal": false
+          },
+          {
+            "type": "cadastral",
+            "name": "지적 경계",
+            "pattern": "dot",
+            "color": "#456779",
+            "available": false,
+            "sourceId": null,
+            "status": "unavailable",
+            "legal": false
+          }
+        ],
+        "interactionCount": 0,
+        "observationIsVerifiedRoute": false,
+        "hierarchy": {
+          "campus": "primary",
+          "context": "background",
+          "essentialLayers": [
+            "boundary",
+            "buildings",
+            "entrances"
+          ]
+        },
+        "batching": {
+          "sourceMeshes": 0,
+          "mergedMeshes": 0,
+          "removedMeshes": 0
+        },
+        "sceneMeshCount": 667,
+        "layerCounts": {
+          "terrain": 1,
+          "boundary": 171,
+          "buildings": 208,
+          "roads": 28,
+          "paths": 58,
+          "parking": 30,
+          "sports": 9,
+          "greenery": 4,
+          "trees": 88,
+          "contours": 9,
+          "water": 2,
+          "entrances": 35,
+          "context": 24
+        }
+      },
+      "models": 16,
+      "boundaryFits": true,
+      "projectedBoundary": [
+        {
+          "x": 67.00818424890718,
+          "y": 287.6617774988191,
+          "depth": 0.9998802636887824
+        },
+        {
+          "x": 77.04924821948934,
+          "y": 314.4058455745159,
+          "depth": 0.999876990613707
+        },
+        {
+          "x": 88.08748124760282,
+          "y": 324.6326705108744,
+          "depth": 0.9998753496624508
+        },
+        {
+          "x": 168.46352956724343,
+          "y": 383.8626393291508,
+          "depth": 0.9998634264962056
+        },
+        {
+          "x": 338.3492768696549,
+          "y": 498.37974675292617,
+          "depth": 0.999852209685397
+        },
+        {
+          "x": 351.76818722299976,
+          "y": 505.97015039927675,
+          "depth": 0.9998512918717855
+        },
+        {
+          "x": 313.00898238015117,
+          "y": 443.2814603643916,
+          "depth": 0.999860352234207
+        },
+        {
+          "x": 273.9738434942343,
+          "y": 392.54548916628704,
+          "depth": 0.9998672698365312
+        },
+        {
+          "x": 270.8744116210378,
+          "y": 389.0931278427662,
+          "depth": 0.9998676804734672
+        },
+        {
+          "x": 264.53826801354165,
+          "y": 384.51980318552415,
+          "depth": 0.9998682244207366
+        },
+        {
+          "x": 119.77227712043091,
+          "y": 305.1868222462655,
+          "depth": 0.9998782468549158
+        },
+        {
+          "x": 76.94765465542778,
+          "y": 288.7071653484738,
+          "depth": 0.999880139956604
+        }
+      ]
+    }
+  ],
+  "state": {
+    "schemaVersion": 1,
+    "campusId": "hanshin-gg",
+    "datasetVersion": "hanshin-gg-2026-10-07-1",
+    "contentVersion": "hanshin-gg-2026-10-07-1",
+    "assetsVersion": "2026-10-07-refinement-lod-1",
+    "releaseId": "0d7204f2-1fc7-4b64-91da-2310e346f0d0",
+    "sharedStatus": "",
+    "refinement": {
+      "purpose": "visitor",
+      "reducedMotion": true,
+      "vrMovement": "teleport",
+      "vrTurn": "snap",
+      "eyeHeightMeters": 1.6
+    },
+    "diagnostics": {
+      "meshCount": 667,
+      "drawCalls": 611,
+      "triangles": 54726,
+      "fps": 12.09256307323425,
+      "measuredRenderMs": 17.845142529964733,
+      "frameP95Ms": 176.80000007152557,
+      "loadedDetails": 16,
+      "lod": {
+        "manwoo": "overview",
+        "janggong": "overview",
+        "hanul": "overview",
+        "joonha": "overview",
+        "neutbom": "overview",
+        "songam": "overview",
+        "gyeongsam": "overview",
+        "shalom": "overview",
+        "seongbin": "overview",
+        "sotong": "overview",
+        "childcare": "overview",
+        "practice": "overview",
+        "haeoreum": "overview",
+        "immanuel": "overview",
+        "pilheon": "overview",
+        "saerom": "overview"
+      },
+      "residentBytes": 699688,
+      "resources": {
+        "textures": 2,
+        "materials": 322
+      },
+      "measurement": {
+        "theme": {
+          "theme": "default",
+          "at": "2026-10-08T14:04:21.649Z",
+          "items": [],
+          "legend": [],
+          "unavailable": 0,
+          "note": "표식은 등록 대상의 위치를 안내합니다. 실제 공사 면적·통행 가능성·실측 경계를 확정하지 않습니다."
+        },
+        "lighting": "guide",
+        "lightingIsSolarAnalysis": false,
+        "floor": {
+          "applied": true,
+          "reason": "외관을 표시합니다.",
+          "floorId": null,
+          "mode": "exterior",
+          "meshCount": 0
+        },
+        "measurement": null,
+        "overlayMeshCount": 0,
+        "clonedMaterialCount": 0,
+        "disposed": false
+      },
+      "renderer": "WebGL",
+      "timing": "browser-frame-interval-and-cpu-render"
+    },
+    "view": "overview",
+    "selectedId": null,
+    "layers": {
+      "boundary": true,
+      "buildings": true,
+      "roads": true,
+      "paths": true,
+      "parking": true,
+      "sports": true,
+      "greenery": true,
+      "trees": true,
+      "water": true,
+      "entrances": true,
+      "context": true,
+      "labels": true,
+      "contours": false
+    },
+    "floor": null,
+    "floorId": null,
+    "quality": "auto",
+    "exaggeration": 1,
+    "camera": {
+      "view": "overview",
+      "alpha": 1.15,
+      "beta": 0.6,
+      "radius": 114.14559459370628,
+      "target": [
+        -3.5147311768802645,
+        3.265282833981916,
+        -1.649663400148409
+      ],
+      "freePosition": [
+        -3.5147311768802645,
+        3.445282833981916,
+        2.350336599851591
+      ],
+      "freeRotation": [
+        0,
+        3.141592653589793,
+        0
+      ]
+    }
+  },
+  "diagnostics": {
+    "ready": true,
+    "view": "overview",
+    "layers": {
+      "boundary": true,
+      "buildings": true,
+      "roads": true,
+      "paths": true,
+      "parking": true,
+      "sports": true,
+      "greenery": true,
+      "trees": true,
+      "water": true,
+      "entrances": true,
+      "context": true,
+      "labels": true,
+      "contours": false
+    },
+    "selectedId": null,
+    "exaggeration": 1,
+    "quality": "auto",
+    "effectiveQuality": "high",
+    "campusId": "hanshin-gg",
+    "catalogVersion": "hanshin-gg-2026-10-07-1",
+    "assetsVersion": "2026-10-07-refinement-lod-1",
+    "releaseId": "0d7204f2-1fc7-4b64-91da-2310e346f0d0",
+    "modelLoader": {
+      "registered": 16,
+      "loaded": 16,
+      "pending": 0,
+      "active": 0,
+      "queued": 0,
+      "residentBytes": 699688,
+      "maxConcurrent": 2,
+      "maxResidentModels": 24,
+      "maxResidentBytes": 134217728,
+      "minScreenCoverage": 0.003,
+      "evictions": 0,
+      "completed": 16,
+      "failed": 0,
+      "variants": {
+        "manwoo": "overview",
+        "janggong": "overview",
+        "hanul": "overview",
+        "joonha": "overview",
+        "neutbom": "overview",
+        "songam": "overview",
+        "gyeongsam": "overview",
+        "shalom": "overview",
+        "seongbin": "overview",
+        "sotong": "overview",
+        "childcare": "overview",
+        "practice": "overview",
+        "haeoreum": "overview",
+        "immanuel": "overview",
+        "pilheon": "overview",
+        "saerom": "overview"
+      },
+      "states": {
+        "manwoo": {
+          "status": "ready",
+          "attempts": 1,
+          "variantId": "overview"
+        },
+        "janggong": {
+          "status": "ready",
+          "attempts": 1,
+          "variantId": "overview"
+        },
+        "hanul": {
+          "status": "ready",
+          "attempts": 1,
+          "variantId": "overview"
+        },
+        "joonha": {
+          "status": "ready",
+          "attempts": 1,
+          "variantId": "overview"
+        },
+        "neutbom": {
+          "status": "ready",
+          "attempts": 1,
+          "variantId": "overview"
+        },
+        "songam": {
+          "status": "ready",
+          "attempts": 1,
+          "variantId": "overview"
+        },
+        "gyeongsam": {
+          "status": "ready",
+          "attempts": 1,
+          "variantId": "overview"
+        },
+        "shalom": {
+          "status": "ready",
+          "attempts": 1,
+          "variantId": "overview"
+        },
+        "seongbin": {
+          "status": "ready",
+          "attempts": 1,
+          "variantId": "overview"
+        },
+        "sotong": {
+          "status": "ready",
+          "attempts": 1,
+          "variantId": "overview"
+        },
+        "childcare": {
+          "status": "ready",
+          "attempts": 1,
+          "variantId": "overview"
+        },
+        "practice": {
+          "status": "ready",
+          "attempts": 1,
+          "variantId": "overview"
+        },
+        "haeoreum": {
+          "status": "ready",
+          "attempts": 1,
+          "variantId": "overview"
+        },
+        "immanuel": {
+          "status": "ready",
+          "attempts": 1,
+          "variantId": "overview"
+        },
+        "pilheon": {
+          "status": "ready",
+          "attempts": 1,
+          "variantId": "overview"
+        },
+        "saerom": {
+          "status": "ready",
+          "attempts": 1,
+          "variantId": "overview"
+        }
+      },
+      "disposed": false
+    },
+    "meshCount": 667,
+    "drawCalls": 611,
+    "triangles": 54726,
+    "fps": 12.09256307323425,
+    "measuredRenderMs": 17.845142529964733,
+    "frameP95Ms": 176.80000007152557,
+    "loadedDetails": 16,
+    "lod": {
+      "manwoo": "overview",
+      "janggong": "overview",
+      "hanul": "overview",
+      "joonha": "overview",
+      "neutbom": "overview",
+      "songam": "overview",
+      "gyeongsam": "overview",
+      "shalom": "overview",
+      "seongbin": "overview",
+      "sotong": "overview",
+      "childcare": "overview",
+      "practice": "overview",
+      "haeoreum": "overview",
+      "immanuel": "overview",
+      "pilheon": "overview",
+      "saerom": "overview"
+    },
+    "residentBytes": 699688,
+    "resources": {
+      "textures": 2,
+      "materials": 322
+    },
+    "measurement": {
+      "theme": {
+        "theme": "default",
+        "at": "2026-10-08T14:04:21.649Z",
+        "items": [],
+        "legend": [],
+        "unavailable": 0,
+        "note": "표식은 등록 대상의 위치를 안내합니다. 실제 공사 면적·통행 가능성·실측 경계를 확정하지 않습니다."
+      },
+      "lighting": "guide",
+      "lightingIsSolarAnalysis": false,
+      "floor": {
+        "applied": true,
+        "reason": "외관을 표시합니다.",
+        "floorId": null,
+        "mode": "exterior",
+        "meshCount": 0
+      },
+      "measurement": null,
+      "overlayMeshCount": 0,
+      "clonedMaterialCount": 0,
+      "disposed": false
+    },
+    "renderer": "WebGL",
+    "timing": "browser-frame-interval-and-cpu-render",
+    "errors": [],
+    "boundaryAreaMeters2": 149181.50265077694,
+    "boundaryAreaMeaning": "estimated-guide-area-not-legal-area",
+    "campusPartCount": 1,
+    "metersPerUnit": 10,
+    "verticalExaggeration": 1,
+    "estimatedTerrain": true,
+    "legalBoundaryAvailable": false,
+    "boundaryLegend": [
+      {
+        "type": "guide",
+        "name": "안내 영역",
+        "pattern": "dash",
+        "color": "#285940",
+        "available": true,
+        "sourceId": "legacy-capture",
+        "status": "estimated",
+        "legal": false
+      },
+      {
+        "type": "legal",
+        "name": "소유 경계",
+        "pattern": "solid",
+        "color": "#623d4f",
+        "available": false,
+        "sourceId": null,
+        "status": "unavailable",
+        "legal": true
+      },
+      {
+        "type": "planning",
+        "name": "계획 경계",
+        "pattern": "dash-dot",
+        "color": "#8c6926",
+        "available": false,
+        "sourceId": null,
+        "status": "unavailable",
+        "legal": false
+      },
+      {
+        "type": "cadastral",
+        "name": "지적 경계",
+        "pattern": "dot",
+        "color": "#456779",
+        "available": false,
+        "sourceId": null,
+        "status": "unavailable",
+        "legal": false
+      }
+    ],
+    "interactionCount": 0,
+    "observationIsVerifiedRoute": false,
+    "hierarchy": {
+      "campus": "primary",
+      "context": "background",
+      "essentialLayers": [
+        "boundary",
+        "buildings",
+        "entrances"
+      ]
+    },
+    "batching": {
+      "sourceMeshes": 0,
+      "mergedMeshes": 0,
+      "removedMeshes": 0
+    },
+    "sceneMeshCount": 667,
+    "layerCounts": {
+      "terrain": 1,
+      "boundary": 171,
+      "buildings": 208,
+      "roads": 28,
+      "paths": 58,
+      "parking": 30,
+      "sports": 9,
+      "greenery": 4,
+      "trees": 88,
+      "contours": 9,
+      "water": 2,
+      "entrances": 35,
+      "context": 24
+    }
+  }
+}

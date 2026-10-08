@@ -1,0 +1,14 @@
+node_modules
+dist
+vendor
+var
+backups
+.git
+.env
+.env.*
+!.env.example
+test-results
+playwright-report
+evidence/*.pdf
+evidence/*.html
+evidence/*.png

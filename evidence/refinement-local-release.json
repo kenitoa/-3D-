@@ -1,0 +1,75 @@
+{
+  "checkedAt": "2026-10-08T14:02:15.859Z",
+  "url": "http://127.0.0.1:8765/",
+  "health": {
+    "status": "ok",
+    "schemaVersion": 3,
+    "catalogSchemaVersion": 1,
+    "revision": 1,
+    "startedAt": "2026-10-08T13:39:07.412Z"
+  },
+  "releaseId": "0d7204f2-1fc7-4b64-91da-2310e346f0d0",
+  "contentVersion": "hanshin-gg-2026-10-07-1",
+  "assetsVersion": "2026-10-07-refinement-lod-1",
+  "registeredModels": 16,
+  "verifiedAssets": 64,
+  "privateReads": [
+    {
+      "path": "/var/campus.sqlite",
+      "status": 404
+    },
+    {
+      "path": "/.env",
+      "status": 404
+    },
+    {
+      "path": "/server/platform.ts",
+      "status": 404
+    },
+    {
+      "path": "/scripts/ifc-worker.py",
+      "status": 404
+    },
+    {
+      "path": "/evidence/screenshots/desktop-overview.png",
+      "status": 404
+    }
+  ],
+  "currentViewer": [
+    {
+      "path": "index.html",
+      "bytes": 21119,
+      "sha256": "244a24f706695eeb167fb2ec7d5aa7c5418e56ab5a3e28fc779753507b7546cf"
+    },
+    {
+      "path": "src/app.js",
+      "bytes": 204497,
+      "sha256": "4989d762f5f42c92ba0d811e0c159ef1759e3acaef3f9a3f472ffd19ab4e60cf"
+    },
+    {
+      "path": "src/domain/campus-platform.js",
+      "bytes": 84346,
+      "sha256": "337b903a65379e693c99255567b92e0e7a5867c19fd413a42a3f9ddc66ae81d1"
+    },
+    {
+      "path": "src/scene/site-scene.js",
+      "bytes": 94061,
+      "sha256": "e6f2872fd8e32e036ae073a8f9f957c036359838a3c713812b0cc47927e4e2b2"
+    },
+    {
+      "path": "service-worker.js",
+      "bytes": 19300,
+      "sha256": "5660588d06e29a8a0410681a11821a9dbc4b6dd2a27a12ff0c29307103419e27"
+    }
+  ],
+  "existingBundleRuntimePreserved": true,
+  "currentViewerMatchesSealedRuntime": false,
+  "sealedRuntimeDiffers": [
+    "src/app.js",
+    "src/domain/campus-platform.js",
+    "src/scene/site-scene.js",
+    "service-worker.js"
+  ],
+  "publicInternetDeployment": false,
+  "catalogHashVerified": true
+}

@@ -2,8 +2,10 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>한신대학교 Babylon.js 3D 모델링</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="description" content="한신대학교 경기캠퍼스의 전체 부지, 지형, 건물과 접근 공간을 살펴보는 3D 조감도입니다. 자료 기반 안내 영역과 미확인 경계를 구분합니다." />
+  <meta name="theme-color" content="#173625" />
+  <title>한신대학교 경기캠퍼스 · 전체 부지 조감도</title>
   <style>
     html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#91bbb3;font-family:Arial,"Malgun Gothic",sans-serif}
     #renderCanvas{width:100%;height:100%;display:block;touch-action:none;outline:0}
@@ -101,43 +103,55 @@
     .detail-badge{display:inline-flex;align-items:center;min-height:24px;padding:0 8px;border-radius:6px;background:#fff8dc;color:#173625;font-size:12px;font-weight:900}
     @media (max-width:980px){.detail-panel{inset:10px;grid-template-columns:1fr;grid-template-rows:minmax(520px,1fr) minmax(260px,.7fr)}.detail-aside{border-left:0;border-top:1px solid rgba(255,248,220,.18)}.detail-floor{min-height:390px}.detail-plan-wrap{padding:14px}.floor-tab{min-width:62px;height:38px}.detail-title{font-size:21px}.zone-label{font-size:11px}.zone-kind{display:none}}
   </style>
-  <script src="https://cdn.babylonjs.com/babylon.js"></script>
-  <script src="https://cdn.babylonjs.com/gui/babylon.gui.min.js"></script>
+  <link rel="stylesheet" href="./styles/site-controls.css" />
+  <link rel="stylesheet" href="./styles/platform-controls.css" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <script src="./vendor/babylon.js"></script>
+  <script src="./vendor/babylon.gui.min.js"></script>
+  <script src="./vendor/babylonjs.loaders.min.js"></script>
+  <script src="./vendor/share-code.js"></script>
 </head>
 <body>
-  <canvas id="renderCanvas" aria-label="한신대학교 Babylon.js 3D 캠퍼스 모델"></canvas>
-  <header class="campus-topbar" aria-label="프로젝트 상태">
+  <a class="skip-to-tools" href="#campusBuildingSearch">건물 검색과 탐색 도구로 이동</a>
+  <canvas id="renderCanvas" tabindex="0" aria-label="한신대학교 경기캠퍼스 전체 부지 3D 조감도" aria-describedby="campusCanvasHelp"></canvas>
+  <p id="campusCanvasHelp" class="sr-only">마우스 또는 터치로 캠퍼스를 살펴볼 수 있습니다. 건물 검색과 카메라 버튼은 키보드로 조작할 수 있습니다. 실제 소유 경계와 세부 치수는 추가 확인이 필요합니다.</p>
+  <header class="campus-topbar" aria-label="캠퍼스 및 자료 상태">
     <div class="campus-title">
-      <strong>한신대학교 경기캠퍼스 3D 모델링</strong>
-      <span>외관 모델 + 건물별 내부 평면 상세화</span>
+      <strong>한신대학교 경기캠퍼스</strong>
+      <span>전체 부지 · 건물 · 지형 · 외부 연결</span>
     </div>
-    <div class="campus-metrics" aria-hidden="true">
-      <span>16개 내부도</span>
-      <span>공개 조사 자료 기반</span>
-      <span>추가 공개자료 반영</span>
+    <div class="campus-metrics">
+      <span id="campusViewBadge">전체 조감도</span>
+      <span id="campusDataBadge">지도·공개자료 기반</span>
     </div>
   </header>
+  <aside id="siteControls" class="site-controls" aria-label="캠퍼스 탐색 및 자료 안내"></aside>
+  <div class="site-map-metrics" aria-label="방위와 거리 기준">
+    <div id="campusNorth" class="site-north" role="img" aria-label="북쪽 방향"><span>N</span><div id="campusNorthNeedle" class="site-north-needle" aria-hidden="true"></div></div>
+    <div id="campusScale" class="site-scale" hidden><span id="campusScaleLabel"></span><span id="campusScaleBar" class="site-scale-bar" aria-hidden="true"></span></div>
+  </div>
+  <section id="campusLoadStatus" class="site-load-status" role="status" aria-live="polite" data-status="loading">
+    <span class="site-load-spinner" aria-hidden="true"></span>
+    <h2 id="campusLoadTitle">캠퍼스 조감도를 준비합니다</h2>
+    <p id="campusLoadMessage">건물·부지·지형 데이터를 읽고 있습니다.</p>
+    <button id="campusRetry" type="button" hidden>3D 화면 다시 시도</button>
+    <button id="campusFallbackDismiss" type="button" hidden>건물 목록으로 확인</button>
+  </section>
+  <div id="campusAnnouncement" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
   <section id="buildingDetail" class="detail-panel" aria-label="건물 내부 상세 화면" hidden></section>
-  <noscript><div class="noscript">JavaScript를 켜야 3D 모델을 볼 수 있습니다.</div></noscript>
+  <noscript><div class="noscript"><div><h1>한신대학교 경기캠퍼스</h1><p>경기도 오산시 한신대길 137. 3D 조감도는 JavaScript가 필요합니다.</p><p>장공관 · 필헌관 · 만우관 · 샬롬채플관 · 임마누엘관 · 경삼관 · 송암관 · 소통관 · 실습동(산학관) · 한울관 · 성빈학사 · 새롬터 · 해오름관 · 장준하통일관 · 늦봄관 · 한신어린이집</p><p>모델의 캠퍼스 안내 영역은 법적 소유 경계를 의미하지 않습니다.</p><a href="https://www.hs.ac.kr/kor/4891/subview.do">공식 캠퍼스 안내 보기</a></div></div></noscript>
   <script src="./src/data/campus-data.js"></script>
   <script src="./src/data/interior-data.js"></script>
-  <script src="./src/models/janggong.js"></script>
-  <script src="./src/models/pilheon.js"></script>
-  <script src="./src/models/manwoo.js"></script>
-  <script src="./src/models/shalom.js"></script>
-  <script src="./src/models/immanuel.js"></script>
-  <script src="./src/models/gyeongsam.js"></script>
-  <script src="./src/models/songam.js"></script>
-  <script src="./src/models/sotong.js"></script>
-  <script src="./src/models/practice.js"></script>
-  <script src="./src/models/hanul.js"></script>
-  <script src="./src/models/seongbin.js"></script>
-  <script src="./src/models/saerom.js"></script>
-  <script src="./src/models/haeoreum.js"></script>
-  <script src="./src/models/joonha.js"></script>
-  <script src="./src/models/neutbom.js"></script>
-  <script src="./src/models/childcare.js"></script>
+  <script src="./src/domain/site-geometry.js"></script>
+  <script src="./src/domain/campus-platform.js"></script>
+  <script src="./src/domain/refinement.js"></script>
+  <script src="./src/data/site-plan.js"></script>
+  <script src="./src/scene/site-scene.js"></script>
+  <script src="./src/ui/site-controls.js"></script>
   <script src="./src/ui/hud.js"></script>
+  <script src="./src/ui/offline-controls.js"></script>
+  <script src="./src/ui/refinement-controls.js"></script>
+  <script src="./src/ui/platform-controls.js"></script>
   <script src="./src/app.js"></script>
 </body>
 </html>

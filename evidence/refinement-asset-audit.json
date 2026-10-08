@@ -1,0 +1,1424 @@
+{
+  "schemaVersion": 1,
+  "manifestVersion": "2026-10-07-refinement-lod-1",
+  "coordinateReference": "campus-local-east-north-altitude-meters",
+  "confirmation": "unchanged",
+  "models": [
+    {
+      "id": "janggong",
+      "source": "src/models/janggong.js",
+      "sourceSha256": "3f5b77928cc085da4599ce4b2e4b6c3647763398f6e93b7f5ca2bb84f5ef9647",
+      "bytes": 5987,
+      "status": "estimated",
+      "warnings": [],
+      "statistics": {
+        "meshes": 56,
+        "triangles": 788,
+        "vertices": 1454,
+        "materials": 10,
+        "textures": 0,
+        "bounds": {
+          "min": [
+            4.037926305085421,
+            -5.289912223815918e-7,
+            -27.72012870386243
+          ],
+          "max": [
+            62.858307253569365,
+            17.410957044363016,
+            -2.6745523549616337
+          ]
+        },
+        "worldBoundsMeters": {
+          "min": [
+            -29.522058855742216,
+            39.54559034854174,
+            -13.641530681401491
+          ],
+          "max": [
+            29.298322092741728,
+            56.956547921895975,
+            11.404045667499304
+          ]
+        }
+      },
+      "placement": {
+        "units": "m",
+        "upAxis": "Y",
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "anchorMeters": [
+          33.33624839782715,
+          -14.078598022460938,
+          39.54559087753296
+        ],
+        "yawRadians": 0,
+        "altitudeDatum": "local-site-meters",
+        "mode": "inferred"
+      },
+      "overview": {
+        "source": "assets/models/generated/janggong-overview.glb",
+        "bytes": 53168,
+        "sha256": "057523e477b9d6be1b6f1db0563360c9b6fc8754336894e8c9c9e64fa48ce027",
+        "statistics": {
+          "bytes": 53168,
+          "meshes": 10,
+          "primitives": 10,
+          "triangles": 788,
+          "materials": 10,
+          "textures": 0,
+          "images": 0,
+          "vertices": 1454,
+          "bounds": {
+            "min": [
+              4.037926197052002,
+              -5.289912223815918e-7,
+              -27.720129013061523
+            ],
+            "max": [
+              62.858306884765625,
+              17.41095733642578,
+              -2.6745524406433105
+            ]
+          },
+          "extensions": [],
+          "decoderRequired": false
+        },
+        "maxBoundsErrorMeters": 3.688037395477295e-7,
+        "geometryCountPreserved": true,
+        "materialApproximation": "Standard diffuse/alpha to PBR baseColor/roughness; textures are rejected"
+      }
+    },
+    {
+      "id": "pilheon",
+      "source": "src/models/pilheon.js",
+      "sourceSha256": "bd649f13cbcd9657a57669063529517121187c0241d9de8a0d6fd22c1dd5ce45",
+      "bytes": 2617,
+      "status": "estimated",
+      "warnings": [],
+      "statistics": {
+        "meshes": 22,
+        "triangles": 264,
+        "vertices": 528,
+        "materials": 6,
+        "textures": 0,
+        "bounds": {
+          "min": [
+            -22.581836047768597,
+            -5.364418029785156e-7,
+            -19.6766884714365
+          ],
+          "max": [
+            2.407718959450726,
+            10.294026583433151,
+            -6.635674676299097
+          ]
+        },
+        "worldBoundsMeters": {
+          "min": [
+            29.445425209403034,
+            38.025741040706635,
+            4.242297849059105
+          ],
+          "max": [
+            54.43498021662236,
+            48.31976816058159,
+            17.28331164419651
+          ]
+        }
+      },
+      "placement": {
+        "units": "m",
+        "upAxis": "Y",
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "anchorMeters": [
+          31.85314416885376,
+          -23.918986320495605,
+          38.02574157714844
+        ],
+        "yawRadians": 0,
+        "altitudeDatum": "local-site-meters",
+        "mode": "inferred"
+      },
+      "overview": {
+        "source": "assets/models/generated/pilheon-overview.glb",
+        "bytes": 21284,
+        "sha256": "794b00f0c0bbb0640267879fc1e8b2b43d334ce201ec04c93483b0629a86ce09",
+        "statistics": {
+          "bytes": 21284,
+          "meshes": 6,
+          "primitives": 6,
+          "triangles": 264,
+          "materials": 6,
+          "textures": 0,
+          "images": 0,
+          "vertices": 528,
+          "bounds": {
+            "min": [
+              -22.581836700439453,
+              -5.364418029785156e-7,
+              -19.67668914794922
+            ],
+            "max": [
+              2.4077188968658447,
+              10.294026374816895,
+              -6.635674476623535
+            ]
+          },
+          "extensions": [],
+          "decoderRequired": false
+        },
+        "maxBoundsErrorMeters": 6.765127196217691e-7,
+        "geometryCountPreserved": true,
+        "materialApproximation": "Standard diffuse/alpha to PBR baseColor/roughness; textures are rejected"
+      }
+    },
+    {
+      "id": "manwoo",
+      "source": "src/models/manwoo.js",
+      "sourceSha256": "d12d7ce7923e9bfaa348948dba17bc33d76cd45381d8a824e80f44aac8bfaafa",
+      "bytes": 3929,
+      "status": "estimated",
+      "warnings": [],
+      "statistics": {
+        "meshes": 80,
+        "triangles": 960,
+        "vertices": 1920,
+        "materials": 7,
+        "textures": 0,
+        "bounds": {
+          "min": [
+            34.935777115821836,
+            -0.0000035390257835388184,
+            -65.14379435777664
+          ],
+          "max": [
+            78.75656604766846,
+            14.961582353711123,
+            -43.00240817070008
+          ]
+        },
+        "worldBoundsMeters": {
+          "min": [
+            -87.38919377326965,
+            82.27269772440195,
+            29.447851836681366
+          ],
+          "max": [
+            -43.56840484142303,
+            97.23428361713886,
+            51.58923802375793
+          ]
+        }
+      },
+      "placement": {
+        "units": "m",
+        "upAxis": "Y",
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "anchorMeters": [
+          -8.632627725601196,
+          -94.59164619445801,
+          82.27270126342773
+        ],
+        "yawRadians": 0,
+        "altitudeDatum": "local-site-meters",
+        "mode": "inferred"
+      },
+      "overview": {
+        "source": "assets/models/generated/manwoo-overview.glb",
+        "bytes": 63888,
+        "sha256": "a061579c93cc26932fbedc074bcc764bee039d03137cc2d44819a083920e5967",
+        "statistics": {
+          "bytes": 63888,
+          "meshes": 7,
+          "primitives": 7,
+          "triangles": 960,
+          "materials": 7,
+          "textures": 0,
+          "images": 0,
+          "vertices": 1920,
+          "bounds": {
+            "min": [
+              34.93577575683594,
+              -0.0000035390257835388184,
+              -65.14379119873047
+            ],
+            "max": [
+              78.7565689086914,
+              14.96158218383789,
+              -43.00240707397461
+            ]
+          },
+          "extensions": [],
+          "decoderRequired": false
+        },
+        "maxBoundsErrorMeters": 0.000003159046173095703,
+        "geometryCountPreserved": true,
+        "materialApproximation": "Standard diffuse/alpha to PBR baseColor/roughness; textures are rejected"
+      }
+    },
+    {
+      "id": "shalom",
+      "source": "src/models/shalom.js",
+      "sourceSha256": "2a28de597968476feed1faf71a97c4b15cc1ddbd7691cf1008b66ec6115fcd58",
+      "bytes": 4661,
+      "status": "estimated",
+      "warnings": [],
+      "statistics": {
+        "meshes": 22,
+        "triangles": 264,
+        "vertices": 528,
+        "materials": 10,
+        "textures": 0,
+        "bounds": {
+          "min": [
+            69.23893163055183,
+            0.0000014394521770100255,
+            -43.226048628240825
+          ],
+          "max": [
+            96.78472053445876,
+            13.035253998637188,
+            -21.634923167526722
+          ]
+        },
+        "worldBoundsMeters": {
+          "min": [
+            -198.64228736795485,
+            57.795101651549345,
+            -27.124154249578716
+          ],
+          "max": [
+            -171.09649846404793,
+            70.83035421073436,
+            -5.533028788864613
+          ]
+        }
+      },
+      "placement": {
+        "units": "m",
+        "upAxis": "Y",
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "anchorMeters": [
+          -101.8575668334961,
+          -16.10189437866211,
+          57.79510021209717
+        ],
+        "yawRadians": 0,
+        "altitudeDatum": "local-site-meters",
+        "mode": "inferred"
+      },
+      "overview": {
+        "source": "assets/models/generated/shalom-overview.glb",
+        "bytes": 24608,
+        "sha256": "3c8ff8f10e825404ecd20419dfa3eb3e172f363687ff3ab79fc26687fb231728",
+        "statistics": {
+          "bytes": 24608,
+          "meshes": 10,
+          "primitives": 10,
+          "triangles": 264,
+          "materials": 10,
+          "textures": 0,
+          "images": 0,
+          "vertices": 528,
+          "bounds": {
+            "min": [
+              69.23892974853516,
+              0.000001439452148588316,
+              -43.22604751586914
+            ],
+            "max": [
+              96.78472137451172,
+              13.035253524780273,
+              -21.634923934936523
+            ]
+          },
+          "extensions": [],
+          "decoderRequired": false
+        },
+        "maxBoundsErrorMeters": 0.0000018820166758359846,
+        "geometryCountPreserved": true,
+        "materialApproximation": "Standard diffuse/alpha to PBR baseColor/roughness; textures are rejected"
+      }
+    },
+    {
+      "id": "immanuel",
+      "source": "src/models/immanuel.js",
+      "sourceSha256": "6457c936e36bb8463c8dfd24a99f6e59a3c36fb70017e021f12233f6655c1145",
+      "bytes": 4541,
+      "status": "estimated",
+      "warnings": [],
+      "statistics": {
+        "meshes": 31,
+        "triangles": 372,
+        "vertices": 744,
+        "materials": 10,
+        "textures": 0,
+        "bounds": {
+          "min": [
+            -4.087571705132717,
+            -3.963708863352622e-7,
+            -54.30825149565935
+          ],
+          "max": [
+            23.85590514019131,
+            12.80212116539478,
+            -33.80927307009698
+          ]
+        },
+        "worldBoundsMeters": {
+          "min": [
+            -128.043422306329,
+            11.560828289389612,
+            -86.82725584059953
+          ],
+          "max": [
+            -100.09994546100498,
+            24.36294985115528,
+            -66.32827741503716
+          ]
+        }
+      },
+      "placement": {
+        "units": "m",
+        "upAxis": "Y",
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "anchorMeters": [
+          -104.1875171661377,
+          32.519004344940186,
+          11.560828685760498
+        ],
+        "yawRadians": 0,
+        "altitudeDatum": "local-site-meters",
+        "mode": "inferred"
+      },
+      "overview": {
+        "source": "assets/models/generated/immanuel-overview.glb",
+        "bytes": 31128,
+        "sha256": "fca90519113ce565fe4a5cbf9859af6bf2dc44349905eeef6d1348eb528449fa",
+        "statistics": {
+          "bytes": 31128,
+          "meshes": 10,
+          "primitives": 10,
+          "triangles": 372,
+          "materials": 10,
+          "textures": 0,
+          "images": 0,
+          "vertices": 744,
+          "bounds": {
+            "min": [
+              -4.087571620941162,
+              -3.9637089344068954e-7,
+              -54.308250427246094
+            ],
+            "max": [
+              23.855905532836914,
+              12.80212116241455,
+              -33.80927276611328
+            ]
+          },
+          "extensions": [],
+          "decoderRequired": false
+        },
+        "maxBoundsErrorMeters": 0.000001068413254756706,
+        "geometryCountPreserved": true,
+        "materialApproximation": "Standard diffuse/alpha to PBR baseColor/roughness; textures are rejected"
+      }
+    },
+    {
+      "id": "gyeongsam",
+      "source": "src/models/gyeongsam.js",
+      "sourceSha256": "fb41511105c936b3954c3fdfbc44d9c7c98f97a9edc580065763330ed6daa116",
+      "bytes": 5465,
+      "status": "estimated",
+      "warnings": [],
+      "statistics": {
+        "meshes": 40,
+        "triangles": 480,
+        "vertices": 960,
+        "materials": 11,
+        "textures": 0,
+        "bounds": {
+          "min": [
+            -43.07391883339733,
+            -6.183981895446777e-7,
+            -7.508883814141157
+          ],
+          "max": [
+            -16.229306471720335,
+            10.852494925260544,
+            10.628664545528594
+          ]
+        },
+        "worldBoundsMeters": {
+          "min": [
+            60.08962274827063,
+            10.483816243708134,
+            -74.42063842229545
+          ],
+          "max": [
+            86.93423510994762,
+            21.336311787366867,
+            -56.2830900626257
+          ]
+        }
+      },
+      "placement": {
+        "units": "m",
+        "upAxis": "Y",
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "anchorMeters": [
+          43.86031627655029,
+          66.9117546081543,
+          10.483816862106323
+        ],
+        "yawRadians": 0,
+        "altitudeDatum": "local-site-meters",
+        "mode": "inferred"
+      },
+      "overview": {
+        "source": "assets/models/generated/gyeongsam-overview.glb",
+        "bytes": 38476,
+        "sha256": "9234aa2ad51abd163b7fd5bad515567d91cd0754215a2241b3478a769dcebabe",
+        "statistics": {
+          "bytes": 38476,
+          "meshes": 11,
+          "primitives": 11,
+          "triangles": 480,
+          "materials": 11,
+          "textures": 0,
+          "images": 0,
+          "vertices": 960,
+          "bounds": {
+            "min": [
+              -43.073917388916016,
+              -6.183981895446777e-7,
+              -7.508883953094482
+            ],
+            "max": [
+              -16.229307174682617,
+              10.852495193481445,
+              10.62866497039795
+            ]
+          },
+          "extensions": [],
+          "decoderRequired": false
+        },
+        "maxBoundsErrorMeters": 0.0000014444813132286072,
+        "geometryCountPreserved": true,
+        "materialApproximation": "Standard diffuse/alpha to PBR baseColor/roughness; textures are rejected"
+      }
+    },
+    {
+      "id": "songam",
+      "source": "src/models/songam.js",
+      "sourceSha256": "71898210800ff70d88dfe74be6a005d4581c4e382d757b7de4046595621e7bd1",
+      "bytes": 4853,
+      "status": "estimated",
+      "warnings": [],
+      "statistics": {
+        "meshes": 42,
+        "triangles": 504,
+        "vertices": 1008,
+        "materials": 8,
+        "textures": 0,
+        "bounds": {
+          "min": [
+            -83.1987933665514,
+            8.419156074523926e-7,
+            -4.956629921495917
+          ],
+          "max": [
+            -56.87203177064657,
+            9.729614287614822,
+            14.073404885828495
+          ]
+        },
+        "worldBoundsMeters": {
+          "min": [
+            220.54743536561728,
+            17.742465384304523,
+            -22.76211803108454
+          ],
+          "max": [
+            246.8741969615221,
+            27.47207883000374,
+            -3.7320832237601276
+          ]
+        }
+      },
+      "placement": {
+        "units": "m",
+        "upAxis": "Y",
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "anchorMeters": [
+          163.6754035949707,
+          17.805488109588623,
+          17.742464542388916
+        ],
+        "yawRadians": 0,
+        "altitudeDatum": "local-site-meters",
+        "mode": "inferred"
+      },
+      "overview": {
+        "source": "assets/models/generated/songam-overview.glb",
+        "bytes": 37348,
+        "sha256": "91f823be5ae3866e9fe8baa0ef8e21a906381f70ed2d222f550fee6b2ea87146",
+        "statistics": {
+          "bytes": 37348,
+          "meshes": 8,
+          "primitives": 8,
+          "triangles": 504,
+          "materials": 8,
+          "textures": 0,
+          "images": 0,
+          "vertices": 1008,
+          "bounds": {
+            "min": [
+              -83.19879150390625,
+              8.419156074523926e-7,
+              -4.956629753112793
+            ],
+            "max": [
+              -56.872032165527344,
+              9.7296142578125,
+              14.073405265808105
+            ]
+          },
+          "extensions": [],
+          "decoderRequired": false
+        },
+        "maxBoundsErrorMeters": 0.000001862645149230957,
+        "geometryCountPreserved": true,
+        "materialApproximation": "Standard diffuse/alpha to PBR baseColor/roughness; textures are rejected"
+      }
+    },
+    {
+      "id": "sotong",
+      "source": "src/models/sotong.js",
+      "sourceSha256": "2181019402287946bdd2b8cb079db4fe353347416887fb29c141a77fa9bbf2f1",
+      "bytes": 4917,
+      "status": "estimated",
+      "warnings": [],
+      "statistics": {
+        "meshes": 62,
+        "triangles": 744,
+        "vertices": 1488,
+        "materials": 9,
+        "textures": 0,
+        "bounds": {
+          "min": [
+            -69.17940164357424,
+            -0.0000011712312701916971,
+            11.556465150415896
+          ],
+          "max": [
+            -44.66375641226769,
+            13.717550131678582,
+            27.614417172968388
+          ]
+        },
+        "worldBoundsMeters": {
+          "min": [
+            124.3947725713253,
+            15.113753101229667,
+            -44.844787596166135
+          ],
+          "max": [
+            148.91041780263186,
+            28.83130440413952,
+            -28.786835573613644
+          ]
+        }
+      },
+      "placement": {
+        "units": "m",
+        "upAxis": "Y",
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "anchorMeters": [
+          79.73101615905762,
+          56.40125274658203,
+          15.113754272460938
+        ],
+        "yawRadians": 0,
+        "altitudeDatum": "local-site-meters",
+        "mode": "inferred"
+      },
+      "overview": {
+        "source": "assets/models/generated/sotong-overview.glb",
+        "bytes": 52608,
+        "sha256": "50f4dcfbbf5b00380930f6c4bbb81c4fcf1da2dc2374340fd291eb2b4c3ccaf8",
+        "statistics": {
+          "bytes": 52608,
+          "meshes": 9,
+          "primitives": 9,
+          "triangles": 744,
+          "materials": 9,
+          "textures": 0,
+          "images": 0,
+          "vertices": 1488,
+          "bounds": {
+            "min": [
+              -69.17940521240234,
+              -0.0000011712312470990582,
+              11.556465148925781
+            ],
+            "max": [
+              -44.66375732421875,
+              13.717550277709961,
+              27.614418029785156
+            ]
+          },
+          "extensions": [],
+          "decoderRequired": false
+        },
+        "maxBoundsErrorMeters": 0.0000035688281059265137,
+        "geometryCountPreserved": true,
+        "materialApproximation": "Standard diffuse/alpha to PBR baseColor/roughness; textures are rejected"
+      }
+    },
+    {
+      "id": "practice",
+      "source": "src/models/practice.js",
+      "sourceSha256": "c91e6d34c0cab980ccb6871b035d5d32a0769ccb65baf1fbe2394ebc876a40d3",
+      "bytes": 5096,
+      "status": "estimated",
+      "warnings": [],
+      "statistics": {
+        "meshes": 31,
+        "triangles": 372,
+        "vertices": 744,
+        "materials": 9,
+        "textures": 0,
+        "bounds": {
+          "min": [
+            -12.192329595982983,
+            -0.0000010654330253601074,
+            -9.60437820032239
+          ],
+          "max": [
+            10.297356412559736,
+            11.325095307826999,
+            6.6742144294083126
+          ]
+        },
+        "worldBoundsMeters": {
+          "min": [
+            295.83646698221565,
+            23.72601640969515,
+            10.297908329218625
+          ],
+          "max": [
+            318.3261529907584,
+            35.05111278295517,
+            26.576500958949328
+          ]
+        }
+      },
+      "placement": {
+        "units": "m",
+        "upAxis": "Y",
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "anchorMeters": [
+          306.1338233947754,
+          -19.902286529541016,
+          23.726017475128174
+        ],
+        "yawRadians": 0,
+        "altitudeDatum": "local-site-meters",
+        "mode": "inferred"
+      },
+      "overview": {
+        "source": "assets/models/generated/practice-overview.glb",
+        "bytes": 30288,
+        "sha256": "94278e3878dcee86ea06528794be4ed6e954ee15ab7df1323cd42bd88e9eabbb",
+        "statistics": {
+          "bytes": 30288,
+          "meshes": 9,
+          "primitives": 9,
+          "triangles": 372,
+          "materials": 9,
+          "textures": 0,
+          "images": 0,
+          "vertices": 744,
+          "bounds": {
+            "min": [
+              -12.192329406738281,
+              -0.0000010654330253601074,
+              -9.604377746582031
+            ],
+            "max": [
+              10.297356605529785,
+              11.325095176696777,
+              6.6742143630981445
+            ]
+          },
+          "extensions": [],
+          "decoderRequired": false
+        },
+        "maxBoundsErrorMeters": 4.5374035906320387e-7,
+        "geometryCountPreserved": true,
+        "materialApproximation": "Standard diffuse/alpha to PBR baseColor/roughness; textures are rejected"
+      }
+    },
+    {
+      "id": "hanul",
+      "source": "src/models/hanul.js",
+      "sourceSha256": "f358e62a668b5e1a1aac1f87ac53d0e8acc98f4f207dc0300d66238abb4814e5",
+      "bytes": 5024,
+      "status": "estimated",
+      "warnings": [],
+      "statistics": {
+        "meshes": 33,
+        "triangles": 396,
+        "vertices": 792,
+        "materials": 9,
+        "textures": 0,
+        "bounds": {
+          "min": [
+            -17.076233848929405,
+            -8.10623170366398e-7,
+            -15.74081401601434
+          ],
+          "max": [
+            17.339504439383745,
+            13.386842584609987,
+            11.054820362478495
+          ]
+        },
+        "worldBoundsMeters": {
+          "min": [
+            -332.967193800956,
+            18.222535037994383,
+            -93.64653091207147
+          ],
+          "max": [
+            -298.55145551264286,
+            31.60937843322754,
+            -66.85089653357863
+          ]
+        }
+      },
+      "placement": {
+        "units": "m",
+        "upAxis": "Y",
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "anchorMeters": [
+          -315.62768936157227,
+          77.90571689605713,
+          18.222535848617554
+        ],
+        "yawRadians": 0,
+        "altitudeDatum": "local-site-meters",
+        "mode": "inferred"
+      },
+      "overview": {
+        "source": "assets/models/generated/hanul-overview.glb",
+        "bytes": 31708,
+        "sha256": "a32ecb457f8604cc2b93d06feca103ba8dcdd2fe7c3cc77de7e98e5a458ade7e",
+        "statistics": {
+          "bytes": 31708,
+          "meshes": 9,
+          "primitives": 9,
+          "triangles": 396,
+          "materials": 9,
+          "textures": 0,
+          "images": 0,
+          "vertices": 792,
+          "bounds": {
+            "min": [
+              -17.07623291015625,
+              -8.1062319168268e-7,
+              -15.740814208984375
+            ],
+            "max": [
+              17.33950424194336,
+              13.386842727661133,
+              11.05482006072998
+            ]
+          },
+          "extensions": [],
+          "decoderRequired": false
+        },
+        "maxBoundsErrorMeters": 9.387731552124023e-7,
+        "geometryCountPreserved": true,
+        "materialApproximation": "Standard diffuse/alpha to PBR baseColor/roughness; textures are rejected"
+      }
+    },
+    {
+      "id": "seongbin",
+      "source": "src/models/seongbin.js",
+      "sourceSha256": "f09f1d7d5e38bff389149b6430269641ac90e7d52fe30eb79722e1f3dbc43a43",
+      "bytes": 6013,
+      "status": "estimated",
+      "warnings": [],
+      "statistics": {
+        "meshes": 113,
+        "triangles": 1356,
+        "vertices": 2712,
+        "materials": 8,
+        "textures": 0,
+        "bounds": {
+          "min": [
+            -17.837579953670456,
+            -4.172325152040912e-8,
+            -13.20647811591624
+          ],
+          "max": [
+            20.52524043321614,
+            14.761433941125869,
+            8.084263896942133
+          ]
+        },
+        "worldBoundsMeters": {
+          "min": [
+            -459.1230340123177,
+            3.173632580041885,
+            -154.60877036750315
+          ],
+          "max": [
+            -420.7602136254311,
+            17.935066562891006,
+            -133.31802835464478
+          ]
+        }
+      },
+      "placement": {
+        "units": "m",
+        "upAxis": "Y",
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "anchorMeters": [
+          -438.59779357910156,
+          141.4022922515869,
+          3.1736326217651367
+        ],
+        "yawRadians": 0,
+        "altitudeDatum": "local-site-meters",
+        "mode": "inferred"
+      },
+      "overview": {
+        "source": "assets/models/generated/seongbin-overview.glb",
+        "bytes": 88512,
+        "sha256": "6e152e710a62525e4cf77befe9a8f27063d157452109a0a19d8f18c14a19df83",
+        "statistics": {
+          "bytes": 88512,
+          "meshes": 8,
+          "primitives": 8,
+          "triangles": 1356,
+          "materials": 8,
+          "textures": 0,
+          "images": 0,
+          "vertices": 2712,
+          "bounds": {
+            "min": [
+              -17.83757972717285,
+              -4.17232506322307e-8,
+              -13.206478118896484
+            ],
+            "max": [
+              20.525239944458008,
+              14.761433601379395,
+              8.084263801574707
+            ]
+          },
+          "extensions": [],
+          "decoderRequired": false
+        },
+        "maxBoundsErrorMeters": 4.887581326329382e-7,
+        "geometryCountPreserved": true,
+        "materialApproximation": "Standard diffuse/alpha to PBR baseColor/roughness; textures are rejected"
+      }
+    },
+    {
+      "id": "saerom",
+      "source": "src/models/saerom.js",
+      "sourceSha256": "bad31be811112f888180686cfcf51494134f6f583ce0d728aa973c4943e10bbe",
+      "bytes": 4306,
+      "status": "estimated",
+      "warnings": [],
+      "statistics": {
+        "meshes": 20,
+        "triangles": 240,
+        "vertices": 480,
+        "materials": 9,
+        "textures": 0,
+        "bounds": {
+          "min": [
+            -8.922141733020538,
+            -0.0000016689300537109375,
+            -9.255077584832904
+          ],
+          "max": [
+            8.765071573108429,
+            9.161203634738925,
+            6.371133599802846
+          ]
+        },
+        "worldBoundsMeters": {
+          "min": [
+            64.55546980872751,
+            48.30609154701233,
+            22.724776522070172
+          ],
+          "max": [
+            82.24268311485648,
+            57.46729685068131,
+            38.35098770670592
+          ]
+        }
+      },
+      "placement": {
+        "units": "m",
+        "upAxis": "Y",
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "anchorMeters": [
+          73.32054138183594,
+          -31.979854106903076,
+          48.30609321594238
+        ],
+        "yawRadians": 0,
+        "altitudeDatum": "local-site-meters",
+        "mode": "inferred"
+      },
+      "overview": {
+        "source": "assets/models/generated/saerom-overview.glb",
+        "bytes": 22344,
+        "sha256": "e5f037bcfb3b72222ed42a7e7ba98744ca693ec4266d80c06125582aed5afec6",
+        "statistics": {
+          "bytes": 22344,
+          "meshes": 9,
+          "primitives": 9,
+          "triangles": 240,
+          "materials": 9,
+          "textures": 0,
+          "images": 0,
+          "vertices": 480,
+          "bounds": {
+            "min": [
+              -8.922142028808594,
+              -0.0000016689300537109375,
+              -9.255077362060547
+            ],
+            "max": [
+              8.765071868896484,
+              9.161203384399414,
+              6.371133804321289
+            ]
+          },
+          "extensions": [],
+          "decoderRequired": false
+        },
+        "maxBoundsErrorMeters": 2.9578805538221786e-7,
+        "geometryCountPreserved": true,
+        "materialApproximation": "Standard diffuse/alpha to PBR baseColor/roughness; textures are rejected"
+      }
+    },
+    {
+      "id": "haeoreum",
+      "source": "src/models/haeoreum.js",
+      "sourceSha256": "5502a2bf6166580237d69450aef5ebfd19d372f52782325c6cc813f0194e84bd",
+      "bytes": 5273,
+      "status": "estimated",
+      "warnings": [],
+      "statistics": {
+        "meshes": 50,
+        "triangles": 600,
+        "vertices": 1200,
+        "materials": 9,
+        "textures": 0,
+        "bounds": {
+          "min": [
+            -14.28268475458026,
+            -4.470348358154297e-7,
+            -10.71409590728581
+          ],
+          "max": [
+            14.82732688188554,
+            13.168205463886263,
+            7.295287359505892
+          ]
+        },
+        "worldBoundsMeters": {
+          "min": [
+            -85.6661740422249,
+            8.701402693986893,
+            -86.20865710265934
+          ],
+          "max": [
+            -56.556162405759096,
+            21.86960860490799,
+            -68.19927383586764
+          ]
+        }
+      },
+      "placement": {
+        "units": "m",
+        "upAxis": "Y",
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "anchorMeters": [
+          -70.83884716033936,
+          75.49456119537354,
+          8.701403141021729
+        ],
+        "yawRadians": 0,
+        "altitudeDatum": "local-site-meters",
+        "mode": "inferred"
+      },
+      "overview": {
+        "source": "assets/models/generated/haeoreum-overview.glb",
+        "bytes": 43976,
+        "sha256": "be91595e94c08a06ff9edb0c755511784534157aa5433800006f2f6a67c44dcc",
+        "statistics": {
+          "bytes": 43976,
+          "meshes": 9,
+          "primitives": 9,
+          "triangles": 600,
+          "materials": 9,
+          "textures": 0,
+          "images": 0,
+          "vertices": 1200,
+          "bounds": {
+            "min": [
+              -14.282684326171875,
+              -4.470348358154297e-7,
+              -10.714096069335938
+            ],
+            "max": [
+              14.827326774597168,
+              13.168205261230469,
+              7.295287132263184
+            ]
+          },
+          "extensions": [],
+          "decoderRequired": false
+        },
+        "maxBoundsErrorMeters": 4.284083843231201e-7,
+        "geometryCountPreserved": true,
+        "materialApproximation": "Standard diffuse/alpha to PBR baseColor/roughness; textures are rejected"
+      }
+    },
+    {
+      "id": "joonha",
+      "source": "src/models/joonha.js",
+      "sourceSha256": "2938bca349791b854d93656334ff1e11b8ca6263f305a2798ae04eb32ff7b24f",
+      "bytes": 5525,
+      "status": "estimated",
+      "warnings": [],
+      "statistics": {
+        "meshes": 75,
+        "triangles": 900,
+        "vertices": 1800,
+        "materials": 9,
+        "textures": 0,
+        "bounds": {
+          "min": [
+            -17.911454242095317,
+            -5.960464477539062e-7,
+            -15.883151037991055
+          ],
+          "max": [
+            15.783609917387366,
+            20.89967831969261,
+            8.961801679804921
+          ]
+        },
+        "worldBoundsMeters": {
+          "min": [
+            329.2249731514603,
+            52.92836606502533,
+            73.48946477621793
+          ],
+          "max": [
+            362.920037310943,
+            73.82804498076439,
+            98.3344174940139
+          ]
+        }
+      },
+      "placement": {
+        "units": "m",
+        "upAxis": "Y",
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "anchorMeters": [
+          345.00858306884766,
+          -89.37261581420898,
+          52.92836666107178
+        ],
+        "yawRadians": 0,
+        "altitudeDatum": "local-site-meters",
+        "mode": "inferred"
+      },
+      "overview": {
+        "source": "assets/models/generated/joonha-overview.glb",
+        "bytes": 61976,
+        "sha256": "5e7ab30d38506b19dcc98b40e7cb73a9bd5c7b03b93631ec9f4fc404244af3c6",
+        "statistics": {
+          "bytes": 61976,
+          "meshes": 9,
+          "primitives": 9,
+          "triangles": 900,
+          "materials": 9,
+          "textures": 0,
+          "images": 0,
+          "vertices": 1800,
+          "bounds": {
+            "min": [
+              -17.911455154418945,
+              -5.960464477539062e-7,
+              -15.883151054382324
+            ],
+            "max": [
+              15.783610343933105,
+              20.89967918395996,
+              8.961801528930664
+            ]
+          },
+          "extensions": [],
+          "decoderRequired": false
+        },
+        "maxBoundsErrorMeters": 9.123236281993741e-7,
+        "geometryCountPreserved": true,
+        "materialApproximation": "Standard diffuse/alpha to PBR baseColor/roughness; textures are rejected"
+      }
+    },
+    {
+      "id": "neutbom",
+      "source": "src/models/neutbom.js",
+      "sourceSha256": "20825d1f84752b9e2ac0c9ac9dcefba566b18cf8dbded632f37c356d3550fcc2",
+      "bytes": 4956,
+      "status": "estimated",
+      "warnings": [],
+      "statistics": {
+        "meshes": 80,
+        "triangles": 960,
+        "vertices": 1920,
+        "materials": 9,
+        "textures": 0,
+        "bounds": {
+          "min": [
+            -15.651405990123749,
+            -0.000001519918441772461,
+            -13.873979106545448
+          ],
+          "max": [
+            14.65044800043106,
+            18.981324112415322,
+            7.666947296261796
+          ]
+        },
+        "worldBoundsMeters": {
+          "min": [
+            8.16752132177353,
+            89.18908920884132,
+            50.35100792348385
+          ],
+          "max": [
+            38.46937531232834,
+            108.17041484117509,
+            71.89193432629109
+          ]
+        }
+      },
+      "placement": {
+        "units": "m",
+        "upAxis": "Y",
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "anchorMeters": [
+          22.81796932220459,
+          -64.2249870300293,
+          89.18909072875977
+        ],
+        "yawRadians": 0,
+        "altitudeDatum": "local-site-meters",
+        "mode": "inferred"
+      },
+      "overview": {
+        "source": "assets/models/generated/neutbom-overview.glb",
+        "bytes": 65548,
+        "sha256": "92564da8f841829f9b54c31932f1021dfc80997996803c4cda76e6963489ed5b",
+        "statistics": {
+          "bytes": 65548,
+          "meshes": 9,
+          "primitives": 9,
+          "triangles": 960,
+          "materials": 9,
+          "textures": 0,
+          "images": 0,
+          "vertices": 1920,
+          "bounds": {
+            "min": [
+              -15.651406288146973,
+              -0.000001519918441772461,
+              -13.873979568481445
+            ],
+            "max": [
+              14.650447845458984,
+              18.9813232421875,
+              7.666947364807129
+            ]
+          },
+          "extensions": [],
+          "decoderRequired": false
+        },
+        "maxBoundsErrorMeters": 8.70227822247216e-7,
+        "geometryCountPreserved": true,
+        "materialApproximation": "Standard diffuse/alpha to PBR baseColor/roughness; textures are rejected"
+      }
+    },
+    {
+      "id": "childcare",
+      "source": "src/models/childcare.js",
+      "sourceSha256": "a10c3e8c52565edcc2d15a1c9ed13426514ab62c4b0abe21ebb08e85f03d2c54",
+      "bytes": 5184,
+      "status": "estimated",
+      "warnings": [],
+      "statistics": {
+        "meshes": 33,
+        "triangles": 386,
+        "vertices": 772,
+        "materials": 11,
+        "textures": 0,
+        "bounds": {
+          "min": [
+            -14.918700957298313,
+            -8.881092057322348e-7,
+            -23.25245374441147
+          ],
+          "max": [
+            10.979882262647152,
+            11.403098285198212,
+            7.245509617030621
+          ]
+        },
+        "worldBoundsMeters": {
+          "min": [
+            446.85703179985285,
+            44.18852717280388,
+            141.37942796945572
+          ],
+          "max": [
+            472.7556150197983,
+            55.5916263461113,
+            171.8773913308978
+          ]
+        }
+      },
+      "placement": {
+        "units": "m",
+        "upAxis": "Y",
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "anchorMeters": [
+          457.8369140625,
+          -164.6318817138672,
+          44.188528060913086
+        ],
+        "yawRadians": 0,
+        "altitudeDatum": "local-site-meters",
+        "mode": "inferred"
+      },
+      "overview": {
+        "source": "assets/models/generated/childcare-overview.glb",
+        "bytes": 32828,
+        "sha256": "e8c4e857f99e3e2b8a84fe91d7fb3e7387fb411756f41d139c3efc3514186c4d",
+        "statistics": {
+          "bytes": 32828,
+          "meshes": 11,
+          "primitives": 11,
+          "triangles": 386,
+          "materials": 11,
+          "textures": 0,
+          "images": 0,
+          "vertices": 772,
+          "bounds": {
+            "min": [
+              -14.918701171875,
+              -8.881091844159528e-7,
+              -23.252452850341797
+            ],
+            "max": [
+              10.97988224029541,
+              11.403098106384277,
+              7.245509624481201
+            ]
+          },
+          "extensions": [],
+          "decoderRequired": false
+        },
+        "maxBoundsErrorMeters": 8.940696716308594e-7,
+        "geometryCountPreserved": true,
+        "materialApproximation": "Standard diffuse/alpha to PBR baseColor/roughness; textures are rejected"
+      }
+    }
+  ],
+  "totalBytes": 78347,
+  "sourceHashes": {
+    "src/data/site-plan.js": "28de4fd054644cc7911c01f3a1a8518dcd39042ebee43ff2bb00b429faa37e1f",
+    "src/data/campus-data.js": "bd85a48f0605d95543efdd74c6730c86d51ca9ca7573143e1d29d593d2d88cd3",
+    "src/scene/site-scene.js": "e6f2872fd8e32e036ae073a8f9f957c036359838a3c713812b0cc47927e4e2b2",
+    "src/app.ts": "45335d5b2ff131ab32eaa524c8e040059d25cbb8a8afe3eea7ceb815a2ddb3e7"
+  },
+  "warnings": []
+}

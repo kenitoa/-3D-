@@ -1,0 +1,391 @@
+{
+  "schemaVersion": 1,
+  "version": "9a9a8034685028fb68d0",
+  "generatedAt": "2026-10-08T14:06:52.254Z",
+  "assets": [
+    {
+      "path": "assets/app-icon.svg",
+      "bytes": 393,
+      "sha256": "0251d4f35061bcb4ed79a6936a98d03dd9f4536a221cacecc6e53b9408dbb61a",
+      "detail": false
+    },
+    {
+      "path": "assets/ar/manifest.json",
+      "bytes": 84,
+      "sha256": "c9814e5948036f4f0a62b4eccaf323f36f3dfed1f61388a65823a5c32ea60c47",
+      "detail": false
+    },
+    {
+      "path": "assets/media/manifest.json",
+      "bytes": 87,
+      "sha256": "e02499fee9e502f8d6662f69710efee7261c223a411bebdc06e3b4f1b82e8b58",
+      "detail": false
+    },
+    {
+      "path": "assets/models/generated/childcare-overview.glb",
+      "bytes": 32828,
+      "sha256": "e8c4e857f99e3e2b8a84fe91d7fb3e7387fb411756f41d139c3efc3514186c4d",
+      "detail": true
+    },
+    {
+      "path": "assets/models/generated/gyeongsam-overview.glb",
+      "bytes": 38476,
+      "sha256": "9234aa2ad51abd163b7fd5bad515567d91cd0754215a2241b3478a769dcebabe",
+      "detail": true
+    },
+    {
+      "path": "assets/models/generated/haeoreum-overview.glb",
+      "bytes": 43976,
+      "sha256": "be91595e94c08a06ff9edb0c755511784534157aa5433800006f2f6a67c44dcc",
+      "detail": true
+    },
+    {
+      "path": "assets/models/generated/hanul-overview.glb",
+      "bytes": 31708,
+      "sha256": "a32ecb457f8604cc2b93d06feca103ba8dcdd2fe7c3cc77de7e98e5a458ade7e",
+      "detail": true
+    },
+    {
+      "path": "assets/models/generated/immanuel-overview.glb",
+      "bytes": 31128,
+      "sha256": "fca90519113ce565fe4a5cbf9859af6bf2dc44349905eeef6d1348eb528449fa",
+      "detail": true
+    },
+    {
+      "path": "assets/models/generated/janggong-overview.glb",
+      "bytes": 53168,
+      "sha256": "057523e477b9d6be1b6f1db0563360c9b6fc8754336894e8c9c9e64fa48ce027",
+      "detail": true
+    },
+    {
+      "path": "assets/models/generated/joonha-overview.glb",
+      "bytes": 61976,
+      "sha256": "5e7ab30d38506b19dcc98b40e7cb73a9bd5c7b03b93631ec9f4fc404244af3c6",
+      "detail": true
+    },
+    {
+      "path": "assets/models/generated/manwoo-overview.glb",
+      "bytes": 63888,
+      "sha256": "a061579c93cc26932fbedc074bcc764bee039d03137cc2d44819a083920e5967",
+      "detail": true
+    },
+    {
+      "path": "assets/models/generated/neutbom-overview.glb",
+      "bytes": 65548,
+      "sha256": "92564da8f841829f9b54c31932f1021dfc80997996803c4cda76e6963489ed5b",
+      "detail": true
+    },
+    {
+      "path": "assets/models/generated/pilheon-overview.glb",
+      "bytes": 21284,
+      "sha256": "794b00f0c0bbb0640267879fc1e8b2b43d334ce201ec04c93483b0629a86ce09",
+      "detail": true
+    },
+    {
+      "path": "assets/models/generated/practice-overview.glb",
+      "bytes": 30288,
+      "sha256": "94278e3878dcee86ea06528794be4ed6e954ee15ab7df1323cd42bd88e9eabbb",
+      "detail": true
+    },
+    {
+      "path": "assets/models/generated/saerom-overview.glb",
+      "bytes": 22344,
+      "sha256": "e5f037bcfb3b72222ed42a7e7ba98744ca693ec4266d80c06125582aed5afec6",
+      "detail": true
+    },
+    {
+      "path": "assets/models/generated/seongbin-overview.glb",
+      "bytes": 88512,
+      "sha256": "6e152e710a62525e4cf77befe9a8f27063d157452109a0a19d8f18c14a19df83",
+      "detail": true
+    },
+    {
+      "path": "assets/models/generated/shalom-overview.glb",
+      "bytes": 24608,
+      "sha256": "3c8ff8f10e825404ecd20419dfa3eb3e172f363687ff3ab79fc26687fb231728",
+      "detail": true
+    },
+    {
+      "path": "assets/models/generated/songam-overview.glb",
+      "bytes": 37348,
+      "sha256": "91f823be5ae3866e9fe8baa0ef8e21a906381f70ed2d222f550fee6b2ea87146",
+      "detail": true
+    },
+    {
+      "path": "assets/models/generated/sotong-overview.glb",
+      "bytes": 52608,
+      "sha256": "50f4dcfbbf5b00380930f6c4bbb81c4fcf1da2dc2374340fd291eb2b4c3ccaf8",
+      "detail": true
+    },
+    {
+      "path": "index.html",
+      "bytes": 21119,
+      "sha256": "244a24f706695eeb167fb2ec7d5aa7c5418e56ab5a3e28fc779753507b7546cf",
+      "detail": false
+    },
+    {
+      "path": "manifest.webmanifest",
+      "bytes": 299,
+      "sha256": "ad5dd7deba939e6a9a6eb85ac44303a203d940c4abad400fe8106bbbf6bd714d",
+      "detail": false
+    },
+    {
+      "path": "service-worker.js",
+      "bytes": 19300,
+      "sha256": "5660588d06e29a8a0410681a11821a9dbc4b6dd2a27a12ff0c29307103419e27",
+      "detail": false
+    },
+    {
+      "path": "src/app.js",
+      "bytes": 204497,
+      "sha256": "4989d762f5f42c92ba0d811e0c159ef1759e3acaef3f9a3f472ffd19ab4e60cf",
+      "detail": false
+    },
+    {
+      "path": "src/data/campus-data.js",
+      "bytes": 50087,
+      "sha256": "bd85a48f0605d95543efdd74c6730c86d51ca9ca7573143e1d29d593d2d88cd3",
+      "detail": false
+    },
+    {
+      "path": "src/data/interior-data.js",
+      "bytes": 69025,
+      "sha256": "86ba4692c5325c0fb823b2b6b6848e1351dd917e899217161139c052fac918a5",
+      "detail": false
+    },
+    {
+      "path": "src/data/model-manifest.json",
+      "bytes": 27815,
+      "sha256": "6794c349af3576c8f2aa123c535eb782ea27e3801e9e5b68645ebd516b907b88",
+      "detail": false
+    },
+    {
+      "path": "src/data/site-plan.js",
+      "bytes": 295335,
+      "sha256": "28de4fd054644cc7911c01f3a1a8518dcd39042ebee43ff2bb00b429faa37e1f",
+      "detail": false
+    },
+    {
+      "path": "src/domain/campus-platform.js",
+      "bytes": 84346,
+      "sha256": "337b903a65379e693c99255567b92e0e7a5867c19fd413a42a3f9ddc66ae81d1",
+      "detail": false
+    },
+    {
+      "path": "src/domain/refinement.js",
+      "bytes": 16735,
+      "sha256": "181f0ba3e85a079ab9bb5e5d8e46ecd16c1b56df4b841aea4b19c8be8438992e",
+      "detail": false
+    },
+    {
+      "path": "src/domain/site-geometry.js",
+      "bytes": 15649,
+      "sha256": "9bfbf349440839f43a5a16ec64f37d15e413013994019a1bdbe729fcb4642993",
+      "detail": false
+    },
+    {
+      "path": "src/models/childcare.js",
+      "bytes": 5184,
+      "sha256": "a10c3e8c52565edcc2d15a1c9ed13426514ab62c4b0abe21ebb08e85f03d2c54",
+      "detail": true
+    },
+    {
+      "path": "src/models/gyeongsam.js",
+      "bytes": 5465,
+      "sha256": "fb41511105c936b3954c3fdfbc44d9c7c98f97a9edc580065763330ed6daa116",
+      "detail": true
+    },
+    {
+      "path": "src/models/haeoreum.js",
+      "bytes": 5273,
+      "sha256": "5502a2bf6166580237d69450aef5ebfd19d372f52782325c6cc813f0194e84bd",
+      "detail": true
+    },
+    {
+      "path": "src/models/hanul.js",
+      "bytes": 5024,
+      "sha256": "f358e62a668b5e1a1aac1f87ac53d0e8acc98f4f207dc0300d66238abb4814e5",
+      "detail": true
+    },
+    {
+      "path": "src/models/immanuel.js",
+      "bytes": 4541,
+      "sha256": "6457c936e36bb8463c8dfd24a99f6e59a3c36fb70017e021f12233f6655c1145",
+      "detail": true
+    },
+    {
+      "path": "src/models/janggong.js",
+      "bytes": 5987,
+      "sha256": "3f5b77928cc085da4599ce4b2e4b6c3647763398f6e93b7f5ca2bb84f5ef9647",
+      "detail": true
+    },
+    {
+      "path": "src/models/joonha.js",
+      "bytes": 5525,
+      "sha256": "2938bca349791b854d93656334ff1e11b8ca6263f305a2798ae04eb32ff7b24f",
+      "detail": true
+    },
+    {
+      "path": "src/models/manwoo.js",
+      "bytes": 3929,
+      "sha256": "d12d7ce7923e9bfaa348948dba17bc33d76cd45381d8a824e80f44aac8bfaafa",
+      "detail": true
+    },
+    {
+      "path": "src/models/neutbom.js",
+      "bytes": 4956,
+      "sha256": "20825d1f84752b9e2ac0c9ac9dcefba566b18cf8dbded632f37c356d3550fcc2",
+      "detail": true
+    },
+    {
+      "path": "src/models/pilheon.js",
+      "bytes": 2617,
+      "sha256": "bd649f13cbcd9657a57669063529517121187c0241d9de8a0d6fd22c1dd5ce45",
+      "detail": true
+    },
+    {
+      "path": "src/models/practice.js",
+      "bytes": 5096,
+      "sha256": "c91e6d34c0cab980ccb6871b035d5d32a0769ccb65baf1fbe2394ebc876a40d3",
+      "detail": true
+    },
+    {
+      "path": "src/models/saerom.js",
+      "bytes": 4306,
+      "sha256": "bad31be811112f888180686cfcf51494134f6f583ce0d728aa973c4943e10bbe",
+      "detail": true
+    },
+    {
+      "path": "src/models/seongbin.js",
+      "bytes": 6013,
+      "sha256": "f09f1d7d5e38bff389149b6430269641ac90e7d52fe30eb79722e1f3dbc43a43",
+      "detail": true
+    },
+    {
+      "path": "src/models/shalom.js",
+      "bytes": 4661,
+      "sha256": "2a28de597968476feed1faf71a97c4b15cc1ddbd7691cf1008b66ec6115fcd58",
+      "detail": true
+    },
+    {
+      "path": "src/models/songam.js",
+      "bytes": 4853,
+      "sha256": "71898210800ff70d88dfe74be6a005d4581c4e382d757b7de4046595621e7bd1",
+      "detail": true
+    },
+    {
+      "path": "src/models/sotong.js",
+      "bytes": 4917,
+      "sha256": "2181019402287946bdd2b8cb079db4fe353347416887fb29c141a77fa9bbf2f1",
+      "detail": true
+    },
+    {
+      "path": "src/scene/site-scene.js",
+      "bytes": 94061,
+      "sha256": "e6f2872fd8e32e036ae073a8f9f957c036359838a3c713812b0cc47927e4e2b2",
+      "detail": false
+    },
+    {
+      "path": "src/ui/hud.js",
+      "bytes": 19098,
+      "sha256": "5ba109189ec114d810238e99ff2a1e142ce4b4754e4d676adb85592268dcd152",
+      "detail": false
+    },
+    {
+      "path": "src/ui/offline-controls.js",
+      "bytes": 3630,
+      "sha256": "37c8ebcb93b8d88c8a828137da5b5be5cc5fe3fde40c3dfd6e33f0a53b39c59b",
+      "detail": false
+    },
+    {
+      "path": "src/ui/platform-controls.js",
+      "bytes": 81011,
+      "sha256": "a2a00ac464508eb8c8f9e0c20d17b9ddf3b0edd9a30e28834e0ded6106a1c777",
+      "detail": false
+    },
+    {
+      "path": "src/ui/refinement-controls.js",
+      "bytes": 41772,
+      "sha256": "22e20892c41d68a5689c94a5165b7b8c68fb6b61cd4902e140424faf972fd9bc",
+      "detail": false
+    },
+    {
+      "path": "src/ui/site-controls.js",
+      "bytes": 23571,
+      "sha256": "26dd7b1f0b71aabe36c56c6753656d6d6477abb43c8a7ae498b8b962048793c8",
+      "detail": false
+    },
+    {
+      "path": "styles/platform-controls.css",
+      "bytes": 7935,
+      "sha256": "3f24ade599a85cc9116df46fc017083ac49bfb61a7f6e855253ba16b63ef9238",
+      "detail": false
+    },
+    {
+      "path": "styles/site-controls.css",
+      "bytes": 11804,
+      "sha256": "6390e1a5d1d7b61a75ce2a23304b16665a728b5e7144c3fe28bf2b1a46b1c2a9",
+      "detail": false
+    },
+    {
+      "path": "vendor/NOTICE.txt",
+      "bytes": 296,
+      "sha256": "2b7582e6a8e474b4bb09571beae81fab7969a4190da7d9348a8b1fddcac25ba9",
+      "detail": false
+    },
+    {
+      "path": "vendor/babylon.gui.min.js",
+      "bytes": 702021,
+      "sha256": "4f15fb417cd40d8fad425ef3b0cec967d815565168ee736a0c8149f1e700a45c",
+      "detail": false
+    },
+    {
+      "path": "vendor/babylon.js",
+      "bytes": 8618830,
+      "sha256": "549832bf871ab7b484c28fc83f49a594b27fa4a383b6b815c4d5368c10586c6b",
+      "detail": false
+    },
+    {
+      "path": "vendor/babylonjs-LICENSE.md",
+      "bytes": 9226,
+      "sha256": "9362ea9ea17cb221a20cbbd63f404710834cc273d2a9a7b60314fd68ab702cd6",
+      "detail": false
+    },
+    {
+      "path": "vendor/babylonjs-gui-LICENSE.md",
+      "bytes": 9226,
+      "sha256": "9362ea9ea17cb221a20cbbd63f404710834cc273d2a9a7b60314fd68ab702cd6",
+      "detail": false
+    },
+    {
+      "path": "vendor/babylonjs-loaders-LICENSE.md",
+      "bytes": 9226,
+      "sha256": "9362ea9ea17cb221a20cbbd63f404710834cc273d2a9a7b60314fd68ab702cd6",
+      "detail": false
+    },
+    {
+      "path": "vendor/babylonjs.loaders.min.js",
+      "bytes": 847980,
+      "sha256": "350dba38540a156dca50410ad459435e129f06023aec956328ae200b50ad1aeb",
+      "detail": false
+    },
+    {
+      "path": "vendor/qr-LICENSE-MIT.txt",
+      "bytes": 1109,
+      "sha256": "07a9f887e9215644439b808628b09f8eece932d79130ff563f958f3a1783e684",
+      "detail": false
+    },
+    {
+      "path": "vendor/qr-LICENSE.txt",
+      "bytes": 11361,
+      "sha256": "f9946796a8a5bd5981565142fa42e3b0cc36aef6f80e86beaf5905b3c0fef1b5",
+      "detail": false
+    },
+    {
+      "path": "vendor/share-code.js",
+      "bytes": 15128,
+      "sha256": "76e58ed7199cae833ea52f217616c289ad28ba8d8a7deec40594acf2d4a4187f",
+      "detail": false
+    }
+  ]
+}

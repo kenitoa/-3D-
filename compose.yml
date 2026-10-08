@@ -1,0 +1,24 @@
+services:
+  campus:
+    build: .
+    init: true
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8765:8765"
+    environment:
+      CAMPUS_PUBLIC_ORIGIN: ${CAMPUS_PUBLIC_ORIGIN:?Set the exact public origin}
+      CAMPUS_TRUSTED_PROXY_IPS: ${CAMPUS_TRUSTED_PROXY_IPS:-}
+      CAMPUS_EMBED_ORIGINS: ${CAMPUS_EMBED_ORIGINS:-}
+      CAMPUS_PROVIDERS_FILE: ${CAMPUS_PROVIDERS_FILE:-}
+      CAMPUS_PROVIDER_TOKEN: ${CAMPUS_PROVIDER_TOKEN:-}
+    volumes:
+      - campus-data:/app/var
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+volumes:
+  campus-data:

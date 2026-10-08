@@ -1,0 +1,66 @@
+{
+  "sourceUrl": "https://ent.hs.ac.kr/upload_data/mojib/RF%280%29_250915165048.pdf",
+  "sourceTitle": "2026학년도 한신대학교 정시 모집요강 Campus Map 경기캠퍼스",
+  "referenceDate": "2026-10-07",
+  "pdfPages": [38, 39],
+  "imageFiles": ["campus-map-page38.png", "campus-map-page39.png"],
+  "imageSizePixels": [1012, 1432],
+  "spreadOffsetPixels": 1012,
+  "coordinateRole": "Manually observed pixels in an oblique illustrated guide, not an orthophoto, cadastral map or engineering plan. Facility rings are schematic approximations and cannot establish measured dimensions or ownership.",
+  "markerPixels": {
+    "janggong": [897, 425], "pilheon": [833, 402], "joonha": [337, 191],
+    "gyeongsam": [707, 477], "neutbom": [960, 344], "manwoo": [1060, 350],
+    "sotong": [560, 407], "seongbin": [1675, 885], "songam": [433, 321],
+    "immanuel": [1060, 532], "hanul": [1449, 662], "haeoreum": [916, 553],
+    "shalom": [1306, 500], "childcare": [217, 110], "practice": [369, 275]
+  },
+  "globalCalibrationIds": ["janggong", "joonha", "seongbin", "hanul", "childcare", "neutbom"],
+  "facilities": [
+    {
+      "id": "main-stadium", "name": "운동장·트랙", "kind": "sports", "number": 15,
+      "referenceAnchors": ["hanul", "shalom", "seongbin"],
+      "pointsPixels": [[1066,694],[1092,677],[1127,680],[1359,747],[1382,762],[1387,789],[1367,822],[1329,845],[1099,782],[1066,769],[1052,750],[1046,727]]
+    },
+    {
+      "id": "tennis-courts", "name": "테니스장", "kind": "sports", "number": 24,
+      "referenceAnchors": ["seongbin", "hanul", "immanuel"],
+      "pointsPixels": [[1736,972],[1798,961],[1836,994],[1771,1014]]
+    },
+    {
+      "id": "outdoor-theater", "name": "야외극장·관람석", "kind": "sports", "number": 26,
+      "referenceAnchors": ["hanul", "shalom", "immanuel"],
+      "pointsPixels": [[1042,686],[1074,637],[1120,619],[1162,625],[1400,697],[1394,728],[1102,661],[1074,702]]
+    },
+    {
+      "id": "parking-29", "name": "29번 주차 구역", "kind": "parking", "number": 29,
+      "referenceAnchors": ["gyeongsam", "sotong", "janggong"],
+      "pointsPixels": [[454,438],[503,454],[567,477],[615,489],[590,513],[526,497],[474,475],[446,458]]
+    },
+    {
+      "id": "parking-30", "name": "30번 주차 구역", "kind": "parking", "number": 30,
+      "referenceAnchors": ["joonha", "childcare", "songam"],
+      "pointsPixels": [[252,128],[298,126],[355,145],[349,157],[301,147],[266,148]]
+    },
+    {
+      "id": "parking-31", "name": "31번 주차 구역", "kind": "parking", "number": 31,
+      "referenceAnchors": ["sotong", "janggong", "neutbom"],
+      "pointsPixels": [[627,356],[672,367],[720,395],[697,406],[650,389],[615,374]]
+    },
+    {
+      "id": "hanshin-park-pond", "name": "한신공원 연못", "kind": "water", "number": 22,
+      "referenceAnchors": ["sotong", "janggong", "neutbom"],
+      "pointsPixels": [[704,375],[730,369],[758,381],[777,397],[767,414],[732,422],[707,410],[697,395]]
+    },
+    {
+      "id": "hanshin-park", "name": "한신공원·새롬터 주변", "kind": "park", "number": 22,
+      "referenceAnchors": ["sotong", "janggong", "neutbom"],
+      "pointsPixels": [[671,352],[748,310],[810,318],[851,370],[817,419],[752,443],[687,420],[650,387]]
+    }
+  ],
+  "points": [
+    {"id":"main-gate","name":"정문","number":16,"kind":"campus-entrance","referenceAnchors":["janggong","gyeongsam","haeoreum"],"pixel":[852,604]},
+    {"id":"east-gate","name":"후문(동문)","number":27,"kind":"campus-entrance","referenceAnchors":["songam","practice","sotong"],"pixel":[333,372]},
+    {"id":"west-gate","name":"후문(서문)","number":28,"kind":"campus-entrance","referenceAnchors":["hanul","seongbin","immanuel"],"pixel":[1484,994]},
+    {"id":"saerom-marker","name":"새롬터(영상문화관)","number":14,"kind":"building-reference","referenceAnchors":["sotong","janggong","neutbom"],"pixel":[805,358]}
+  ]
+}

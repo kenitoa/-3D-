@@ -1,0 +1,115 @@
+{
+  "sourceUrl": "https://www.hs.ac.kr/kor/4891/subview.do",
+  "referenceDate": "2026-10-07",
+  "generatedAt": "2026-10-07T12:35:12.252Z",
+  "sourceHtmlSha256": "aadbbeaa1b675252d386376f0c7071c39053c08087a3a9574f24187b4f7b2dbb",
+  "hashScope": "Source HTML fragment used for extraction; unrelated scripts removed",
+  "coordinateRole": "Official website map markers, not measured building centroids or surveyed coordinates",
+  "markers": [
+    {
+      "index": 1,
+      "name": "1 장공관(본관)",
+      "lat": 37.1935378,
+      "lon": 127.0234698,
+      "photoUrl": "https://www.hs.ac.kr/sites/kor/atchmnfl/imgMap/102/temp_1503686634224101.tmp"
+    },
+    {
+      "index": 2,
+      "name": "2 필헌관(대학원)",
+      "lat": 37.1934395,
+      "lon": 127.0239419,
+      "photoUrl": "https://www.hs.ac.kr/sites/kor/atchmnfl/imgMap/102/temp_1504856398486100.tmp"
+    },
+    {
+      "index": 3,
+      "name": "18 장준하통일관",
+      "lat": 37.1927387,
+      "lon": 127.0273697,
+      "photoUrl": "https://www.hs.ac.kr/sites/kor/atchmnfl/imgMap/102/temp_1504856738294100.tmp"
+    },
+    {
+      "index": 4,
+      "name": "6 경삼관(중앙도서관)",
+      "lat": 37.1941104,
+      "lon": 127.0242959,
+      "photoUrl": "https://www.hs.ac.kr/sites/kor/atchmnfl/imgMap/102/temp_1504857020707100.tmp"
+    },
+    {
+      "index": 5,
+      "name": "20 늦봄관",
+      "lat": 37.1929642,
+      "lon": 127.0237327,
+      "photoUrl": "https://www.hs.ac.kr/sites/kor/atchmnfl/imgMap/102/temp_1504857168513100.tmp"
+    },
+    {
+      "index": 6,
+      "name": "3 만우관",
+      "lat": 37.1931757,
+      "lon": 127.0227349,
+      "photoUrl": "https://www.hs.ac.kr/sites/kor/atchmnfl/imgMap/102/temp_1504857222519100.tmp"
+    },
+    {
+      "index": 7,
+      "name": "8 소통관(교수동)",
+      "lat": 37.1938744,
+      "lon": 127.0250121,
+      "photoUrl": "https://www.hs.ac.kr/sites/kor/atchmnfl/imgMap/102/temp_1504857295715100.tmp"
+    },
+    {
+      "index": 8,
+      "name": "성빈학사",
+      "lat": 37.1948283,
+      "lon": 127.0185184,
+      "photoUrl": "https://www.hs.ac.kr/sites/kor/atchmnfl/imgMap/102/temp_1504857493323100.tmp"
+    },
+    {
+      "index": 9,
+      "name": "7 송암관",
+      "lat": 37.1936394,
+      "lon": 127.0261011,
+      "photoUrl": "https://www.hs.ac.kr/sites/kor/atchmnfl/imgMap/102/temp_1504857559326100.tmp"
+    },
+    {
+      "index": 10,
+      "name": "5 임마누엘관(학생회관)",
+      "lat": 37.1942034,
+      "lon": 127.022185,
+      "photoUrl": "https://www.hs.ac.kr/sites/kor/atchmnfl/imgMap/102/temp_1504857714739100.tmp"
+    },
+    {
+      "index": 11,
+      "name": "10 한울관",
+      "lat": 37.1942504,
+      "lon": 127.0199159,
+      "photoUrl": "https://www.hs.ac.kr/sites/kor/atchmnfl/imgMap/102/temp_1504857758341100.tmp"
+    },
+    {
+      "index": 12,
+      "name": "17 해오름관",
+      "lat": 37.1942248,
+      "lon": 127.0226705,
+      "photoUrl": "https://www.hs.ac.kr/sites/kor/atchmnfl/imgMap/102/temp_1504857965349100.tmp"
+    },
+    {
+      "index": 13,
+      "name": "샬롬채플관",
+      "lat": 37.1936736,
+      "lon": 127.0213938,
+      "photoUrl": "https://www.hs.ac.kr/sites/kor/atchmnfl/imgMap/102/temp_1504858010151100.tmp"
+    },
+    {
+      "index": 14,
+      "name": "한신어린이집",
+      "lat": 37.1920582,
+      "lon": 127.0286518,
+      "photoUrl": "https://www.hs.ac.kr/sites/kor/atchmnfl/imgMap/102/temp_1505202370627100.tmp"
+    },
+    {
+      "index": 15,
+      "name": "9 산학관",
+      "lat": 37.193368,
+      "lon": 127.0269325,
+      "photoUrl": "https://www.hs.ac.kr/sites/kor/atchmnfl/imgMap/102/temp_1519350145234100.tmp"
+    }
+  ]
+}
