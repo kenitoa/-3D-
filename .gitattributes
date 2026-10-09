@@ -1,5 +1,8 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 
-# Keep the reproducible site-plan artifact byte-identical on Windows checkouts.
+# Keep regenerated spatial artifacts byte-identical on Windows checkouts.
 src/data/site-plan.js text eol=lf
+evidence/source-manifest.json text eol=lf
+evidence/legacy-spatial-snapshot.json text eol=lf
+evidence/spatial-verification.json text eol=lf
