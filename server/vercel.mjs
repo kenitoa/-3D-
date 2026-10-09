@@ -890,7 +890,7 @@ async function createPlatform(options) {
     return { id: row.id, catalog, summary: row.summary, status: row.status, authorId: row.author_id, reviewerId: row.reviewer_id, revision: Number(row.revision), baseRevision: Number(row.base_revision), createdAt: row.created_at, updatedAt: row.updated_at };
   }
   function safeReport(row) {
-    return { id: row.id, spaceId: row.space_id, type: row.type, description: row.description, status: row.status, hasPhoto: !!row.photo, responseNote: row.response_note, createdAt: row.created_at, updatedAt: row.updated_at };
+    return { id: row.id, spaceId: row.space_id, type: row.type, description: row.description, status: row.status, hasPhoto: row.has_photo === void 0 ? !!row.photo : !!row.has_photo, responseNote: row.response_note, createdAt: row.created_at, updatedAt: row.updated_at };
   }
   async function publicOperations(page) {
     const full = await repository.current();
@@ -1268,7 +1268,7 @@ async function createPlatform(options) {
         }
         if (path === "/api/v1/admin/reports" && method === "GET") {
           const page = pagination(url), scope = identityScopeSql(user);
-          await sendPage(await repository.db.prepare(`SELECT reports.* FROM reports LEFT JOIN identities identity ON identity.id=reports.space_id WHERE ${scope.sql} ORDER BY reports.created_at DESC,reports.id DESC LIMIT ? OFFSET ?`).all(...scope.parameters, page.limit + 1, page.offset), page, safeReport);
+          await sendPage(await repository.db.prepare(`SELECT reports.id,reports.space_id,reports.type,reports.description,reports.status,reports.response_note,reports.created_at,reports.updated_at,reports.photo IS NOT NULL AS has_photo FROM reports LEFT JOIN identities identity ON identity.id=reports.space_id WHERE ${scope.sql} ORDER BY reports.created_at DESC,reports.id DESC LIMIT ? OFFSET ?`).all(...scope.parameters, page.limit + 1, page.offset), page, safeReport);
           return true;
         }
         const reportMatch = path.match(/^\/api\/v1\/admin\/reports\/([a-f0-9-]+)(\/photo)?$/);

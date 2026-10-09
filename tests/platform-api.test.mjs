@@ -154,6 +154,8 @@ test('photo uploads accept decoded PNG structure, strip metadata, reject damage,
     const body={spaceId:'hanshin-gg:building:janggong',type:'location',description:'사진 확인',idempotencyKey:'valid-png-photo-key',photo:{mimeType:'image/png',dataBase64:photo.toString('base64')}};
     const receipt=await app.request('/api/v1/reports','POST',body);assert.equal(receipt.status,201);
     const reviewer=await app.login('reviewer');
+    const listed=(await app.request('/api/v1/admin/reports','GET',undefined,reviewer)).json.data.find(row=>row.id===receipt.json.data.id);
+    assert.equal(listed.hasPhoto,true);assert.ok(!Object.hasOwn(listed,'photo'));assert.ok(!Object.hasOwn(listed,'photo_mime'));
     const attachment=await app.request(`/api/v1/admin/reports/${receipt.json.data.id}/photo`,'GET',undefined,reviewer);assert.equal(attachment.status,200);assert.equal(attachment.headers.get('content-type'),'image/png');assert.match(attachment.headers.get('content-disposition'),/^attachment/);assert.ok(!attachment.bytes.includes(Buffer.from('PRIVATE_PHOTO_METADATA')));
     assert.equal((await app.request(`/api/v1/admin/reports/${receipt.json.data.id}/photo`)).status,401);
     const damaged=Buffer.from(photo);damaged[29]^=1;
