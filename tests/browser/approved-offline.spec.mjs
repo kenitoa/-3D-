@@ -21,8 +21,11 @@ test("approved selected-building bundle keeps catalog and asset versions through
     expect(audit.saved.catalog.contentVersion).toBe(bundle.contentVersion); expect(audit.saved.catalog.assetsVersion).toBe(bundle.assetsVersion); expect(audit.saved.manifest).toEqual(bundle.manifest); expect(audit.hashes.length).toBeLessThan(bundle.assets.length);
     for (const asset of audit.hashes) { const approved = bundle.assets.find((item) => item.path === asset.path); expect(approved).toBeTruthy(); expect(asset.bytes).toBe(approved.bytes); expect(asset.sha256).toBe(approved.sha256); }
     expect(audit.allKeys.some((url) => /\/api\/|admin|refinement-scene-preview/.test(url))).toBe(false); await info.attach("approved-offline-audit", { body: Buffer.from(JSON.stringify(audit, null, 2)), contentType: "application/json" });
+    await context.setOffline(true);
+    // Observe the offline reload after Chromium acknowledges the network change;
+    // the live online scene may still request detail while setOffline is pending.
     const offlineRequests = []; page.on("request", (request) => offlineRequests.push(new URL(request.url()).pathname.replace(/^\//, "")));
-    await context.setOffline(true); await page.reload({ waitUntil: "domcontentloaded" }); await ready(page);
+    await page.reload({ waitUntil: "domcontentloaded" }); await ready(page);
     await expect.poll(() => page.evaluate(() => window.CampusApp.diagnostics().catalogVersion)).toBe(bundle.contentVersion); expect((await page.evaluate(() => window.CampusOffline.readCatalog())).assetsVersion).toBe(bundle.assetsVersion); expect((await page.evaluate(() => window.CampusOffline.status())).releaseId).toBe(bundle.releaseId);
     const base = await page.evaluate(() => window.CampusApp.site.getDiagnostics()); expect(base.campusPartCount).toBeGreaterThan(0); expect(base.boundaryAreaMeaning).toBe("estimated-guide-area-not-legal-area");
     const privateReads = await page.evaluate(async () => { const result = []; for (const path of ["/api/v1/catalog", "/api/v1/admin/status", "/admin.html"]) { try { await fetch(path, { cache: "no-store" }); result.push(true); } catch { result.push(false); } } return result; }); expect(privateReads).toEqual([false, false, false]);
