@@ -18,7 +18,7 @@ async function fixture(options={}){
   await new Promise((accept,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',accept);});
   const origin=`http://127.0.0.1:${server.address().port}`;
   const logs=[];
-  const platform=createPlatform({root,databasePath,origins:[origin],domain,baseline:copy(baseline),now:()=>new Date('2026-10-07T08:00:00Z'),log:(entry)=>logs.push(entry),...options});
+  const platform=await createPlatform({root,databasePath,origins:[origin],domain,baseline:copy(baseline),now:()=>new Date('2026-10-07T08:00:00Z'),log:(entry)=>logs.push(entry),...options});
   for(const role of ['admin','editor','reviewer'])platform.repository.createUser(role,`fixture-password-${role}`,role,role==='admin'?[]:['hanshin-gg']);
   async function request(path,method='GET',body,session,extra={}){
     const response=await fetch(origin+path,{method,headers:{Origin:origin,...(body!==undefined?{'Content-Type':'application/json'}:{}),...(session?{Cookie:session.cookie,'X-CSRF-Token':session.csrf}:{}),...extra},body:body!==undefined?JSON.stringify(body):undefined});
@@ -182,7 +182,7 @@ test('migration and online backup preserve records across application restart',a
     await app.platform.repository.backup(backup);
     assert.ok((await readFile(backup)).length>0);
     const reopened=new CampusRepository(root,backup);
-    try{assert.equal(reopened.current().contentVersion,baseline.contentVersion);assert.equal(reopened.db.prepare('SELECT COUNT(*) count FROM users').get().count,3);assert.equal(reopened.db.prepare('SELECT COUNT(*) count FROM migrations').get().count,3);}
+    try{assert.equal(reopened.current().contentVersion,baseline.contentVersion);assert.equal(reopened.db.prepare('SELECT COUNT(*) count FROM users').get().count,3);assert.equal(reopened.db.prepare('SELECT COUNT(*) count FROM migrations').get().count,4);}
     finally{reopened.close();}
     await assert.rejects(()=>app.platform.repository.backup(backup));
   }finally{await app.close();}

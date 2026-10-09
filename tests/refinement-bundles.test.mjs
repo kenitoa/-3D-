@@ -67,7 +67,7 @@ async function fixture({ oldDatabase = false } = {}) {
   const server = http.createServer((request, response) => platform.handle(request, response));
   await new Promise((accept, reject) => { server.once('error', reject); server.listen(0, '127.0.0.1', accept); });
   const origin = `http://127.0.0.1:${server.address().port}`;
-  platform = createPlatform({ root, assetRoot, databasePath, origins: [origin], domain, baseline: fixtureBaseline, now: () => new Date(fixtureTime), log() {} });
+  platform = await createPlatform({ root, assetRoot, databasePath, origins: [origin], domain, baseline: fixtureBaseline, now: () => new Date(fixtureTime), log() {} });
   for (const role of ['admin', 'editor', 'reviewer']) platform.repository.createUser(role, `bundle-password-${role}`, role, role === 'admin' ? [] : ['hanshin-gg']);
   async function request(path, method = 'GET', body, session) {
     const response = await fetch(origin + path, { method, headers: { Origin: origin, ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}), ...(session ? { Cookie: session.cookie, 'X-CSRF-Token': session.csrf } : {}) }, body: body === undefined ? undefined : JSON.stringify(body) });
@@ -184,7 +184,7 @@ test('schema 3 adds immutable bundle storage and lazily backfills old releases w
   const f = await fixture({ oldDatabase: true });
   try {
     const db = f.platform.repository.db;
-    assert.deepEqual(db.prepare('SELECT version FROM migrations ORDER BY version').all().map((row) => row.version), [1, 2, 3]);
+    assert.deepEqual(db.prepare('SELECT version FROM migrations ORDER BY version').all().map((row) => row.version), [1, 2, 3, 4]);
     assert.equal(f.platform.repository.revision(), 7); assert.equal(db.prepare('SELECT password_hash FROM users WHERE id=?').get('existing-user').password_hash, 'old-password-hash-preserved');
     assert.equal(db.prepare('SELECT description FROM reports WHERE id=?').get('existing-report').description, 'PRIVATE_LEGACY_REPORT');
     assert.equal(db.prepare('SELECT error_code FROM provider_runs WHERE provider_id=?').get('existing-provider').error_code, 'OLD_PROVIDER_FAILURE');

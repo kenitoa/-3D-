@@ -6,13 +6,20 @@ import { readFileSync, mkdirSync, existsSync, realpathSync, lstatSync } from 'no
 import { resolve, dirname, relative, isAbsolute } from 'node:path';
 import vm from 'node:vm';
 import { isIP } from 'node:net';
+import { Readable } from 'node:stream';
+import { pipeline } from 'node:stream/promises';
 import { loadProviders, fetchProvider } from './providers';
 import type { CampusProvider } from './providers';
 import { prepareReleaseBundle, storeReleaseBundle, readReleaseBundle } from './asset-bundles';
 import { validateModelManifest } from '../src/scene/model-loader';
 import { answerApprovedQuestion } from './assistant';
 import type { CampusCatalog } from '../src/types/platform-types';
+import type { Client } from '@libsql/client';
+import { localDatabase, libsqlDatabase } from './database';
+import { AsyncRepository, migrations } from './async-repository';
 export { loadProviders, publicNetworkAddress, fetchProvider } from './providers';
+export { remoteClient, libsqlDatabase } from './database';
+export { AsyncRepository } from './async-repository';
 
 type JsonRecord = Record<string, unknown>;
 type Role = 'editor' | 'reviewer' | 'admin';
@@ -25,7 +32,7 @@ interface Domain {
   resolve(catalog: unknown, id: string): JsonRecord | null;
   operationStatus(records: unknown[], entityId: string, at: string): unknown;
 }
-interface Options { root: string; assetRoot?: string; databasePath?: string; origins: string[]; secureCookies?: boolean; baseline?: JsonRecord; domain?: Domain; now?: () => Date; log?: (record: JsonRecord) => void; providersFile?: string; providers?: CampusProvider[]; providerTransport?: (provider: CampusProvider, payload?: Record<string, unknown>) => Promise<unknown>; trustedProxyIPs?: string[] }
+interface Options { root: string; assetRoot?: string; databasePath?: string; sqlClient?: Client; initializeDatabase?: boolean; origins: string[]; secureCookies?: boolean; baseline?: JsonRecord; domain?: Domain; now?: () => Date; log?: (record: JsonRecord) => void; providersFile?: string; providers?: CampusProvider[]; providerTransport?: (provider: CampusProvider, payload?: Record<string, unknown>) => Promise<unknown>; trustedProxyIPs?: string[]; clientAddress?: (request: IncomingMessage) => string }
 class ApiError extends Error { constructor(public status: number, public code: string, message: string) { super(message); } }
 function fail(status: number, code: string, message: string): never { throw new ApiError(status, code, message); }
 const hash = (value: string | Uint8Array): string => createHash('sha256').update(value).digest('hex');
@@ -82,7 +89,6 @@ export class CampusRepository {
     this.db.exec('PRAGMA foreign_keys=ON; PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000;');
     this.db.exec('CREATE TABLE IF NOT EXISTS migrations(version INTEGER PRIMARY KEY, applied_at TEXT NOT NULL);');
     const version = this.db.prepare('SELECT MAX(version) AS version FROM migrations').get()?.version;
-    const migrations=['0001-platform.sql','0002-provider-runs.sql','0003-asset-bundles.sql'];
     if (version !== null && version !== undefined && Number(version) > migrations.length) throw new Error('Database schema is newer than this application.');
     for(let index=Number(version||0);index<migrations.length;index++)this.transaction(()=>{this.db.exec(readFileSync(resolve(root,'server/migrations',migrations[index]),'utf8'));this.db.prepare('INSERT INTO migrations VALUES(?,?)').run(index+1,new Date().toISOString());});
   }
@@ -107,21 +113,25 @@ export class CampusRepository {
   }
   close(): void { this.db.close(); }
 }
-export function createPlatform(options: Options) {
+export async function createPlatform(options: Options) {
   const loaded = options.domain && options.baseline ? { domain: options.domain, baseline: options.baseline } : loadDomain(options.root);
   const domain = loaded.domain;
   const providers=options.providers||loadProviders(options.providersFile);
   const providerTransport=options.providerTransport||fetchProvider;
-  const providerBusy=new Set<string>();
-  const repository = new CampusRepository(options.root, options.databasePath);
+  const localRepository = options.sqlClient ? null : new CampusRepository(options.root, options.databasePath);
+  const repository = new AsyncRepository(options.root, options.sqlClient ? libsqlDatabase(options.sqlClient) : localDatabase(localRepository!.db));
+  if (options.sqlClient) {
+    if (options.initializeDatabase) await repository.migrate();
+    else await repository.assertReady();
+  }
   const clock = options.now || (() => new Date());
   const origins = new Set(options.origins.map((v) => { const u = new URL(v); if (!['http:','https:'].includes(u.protocol) || u.origin !== v || u.username || u.password) throw new Error('Invalid public origin.'); return u.origin; }));
   if (!origins.size) throw new Error('An explicit public origin is required.');
   const dummyPassword = passwordHash(randomBytes(24).toString('hex'));
-  const limits = new Map<string, { expires: number; count: number }>();
   const normalizeIP = (value: string): string => value.startsWith('::ffff:') && isIP(value.slice(7)) === 4 ? value.slice(7) : value;
   const trustedProxies = new Set((options.trustedProxyIPs || []).map((value) => { if (!isIP(value)) throw new Error('Trusted proxy entries must be explicit IP addresses.'); return normalizeIP(value); }));
   function clientAddress(request: IncomingMessage): string {
+    if (options.clientAddress) return options.clientAddress(request);
     const address = normalizeIP(request.socket.remoteAddress || 'local');
     const forwarded = request.headers['x-forwarded-for'];
     if (!trustedProxies.has(address) || forwarded === undefined) return address;
@@ -130,44 +140,53 @@ export function createPlatform(options: Options) {
   }
   const metrics: Record<string, number> = { requests: 0, errors: 0, conflicts: 0, reportsReceived: 0, releasesPublished: 0 };
   const startedAt = clock().toISOString();
-  function rememberIds(catalog: JsonRecord, restoring = false): void {
+  async function rememberIds(catalog: JsonRecord, restoring = false): Promise<void> {
     const rows = arrayRecords(catalog.entities);
+    const existing = new Map((await repository.db.prepare('SELECT * FROM identities').all()).map(row => [String(row.id),row]));
     for (const item of rows) {
-      const old = repository.db.prepare('SELECT * FROM identities WHERE id=?').get(String(item.id));
+      const old = existing.get(String(item.id));
       if (old && (old.kind !== item.kind || old.campus_id !== item.campusId || (Number(old.retired) && !restoring && item.status !== 'retired'))) fail(422, 'IDENTITY_REUSED', '기존 공간 ID를 다른 공간에 재사용할 수 없습니다.');
     }
-    repository.db.exec('UPDATE identities SET retired=1;');
-    for (const item of rows) repository.db.prepare('INSERT INTO identities(id,campus_id,kind,retired) VALUES(?,?,?,?) ON CONFLICT(id) DO UPDATE SET retired=excluded.retired').run(String(item.id), String(item.campusId), String(item.kind), item.status === 'retired' ? 1 : 0);
+    (await repository.db.exec('UPDATE identities SET retired=1;'));
+    await repository.db.batch(rows.map(item => ({sql:'INSERT INTO identities(id,campus_id,kind,retired) VALUES(?,?,?,?) ON CONFLICT(id) DO UPDATE SET retired=excluded.retired',args:[String(item.id),String(item.campusId),String(item.kind),item.status === 'retired' ? 1 : 0]})));
   }
-  if (!repository.setting('currentRelease')) repository.transaction(() => {
+  if (!options.sqlClient || options.initializeDatabase) (await repository.transaction(async () => {
+    if (await repository.setting('currentRelease')) return;
     const id = randomUUID();
-    repository.db.prepare('INSERT INTO releases(id,catalog,summary,created_at) VALUES(?,?,?,?)').run(id, JSON.stringify(loaded.baseline), '기존 공개 자료를 변환한 최초 공개판', clock().toISOString());
-    repository.setSetting('currentRelease', id); repository.setSetting('revision', '1'); rememberIds(loaded.baseline);
+    (await repository.db.prepare('INSERT INTO releases(id,catalog,summary,created_at) VALUES(?,?,?,?)').run(id, JSON.stringify(loaded.baseline), '기존 공개 자료를 변환한 최초 공개판', clock().toISOString()));
+    (await repository.setSetting('currentRelease', id)); (await repository.setSetting('revision', '1')); (await rememberIds(loaded.baseline));
+  }));
+  await repository.transaction(async () => {
+    if (!await repository.setting('receiptSecret')) await repository.setSetting('receiptSecret',randomBytes(32).toString('hex'));
   });
-  if(!repository.setting('receiptSecret'))repository.setSetting('receiptSecret',randomBytes(32).toString('hex'));
-  const receiptToken=(id:string)=>createHmac('sha256',repository.setting('receiptSecret')!).update(id).digest('hex');
-  function rate(key: string, count: number, period: number): void {
+  const receiptSecret = (await repository.setting('receiptSecret'))!;
+  const receiptToken=(id:string)=>createHmac('sha256',receiptSecret).update(id).digest('hex');
+  async function rate(key: string, count: number, period: number): Promise<void> {
     const now = clock().getTime();
-    for (const [id, bucket] of limits) if (bucket.expires <= now) limits.delete(id);
-    if (limits.size > 4096) return fail(429, 'RATE_LIMITED', '잠시 후 다시 시도해 주세요.');
-    const bucket = limits.get(key) || { expires: now + period, count: 0 }; bucket.count++; limits.set(key, bucket);
-    if (bucket.count > count) fail(429, 'RATE_LIMITED', '잠시 후 다시 시도해 주세요.');
+    const hits = await repository.transaction(async () => {
+      await repository.db.prepare('DELETE FROM rate_limits WHERE expires_at<=?').run(now);
+      const capacity = await repository.db.prepare('SELECT COUNT(*) AS count FROM rate_limits').get();
+      if (Number(capacity?.count) >= 4096 && !await repository.db.prepare('SELECT key FROM rate_limits WHERE key=?').get(key)) return count + 1;
+      const row = await repository.db.prepare('INSERT INTO rate_limits(key,hits,expires_at) VALUES(?,1,?) ON CONFLICT(key) DO UPDATE SET hits=rate_limits.hits+1 RETURNING hits').get(key,now+period);
+      return Number(row?.hits);
+    });
+    if (hits > count) fail(429, 'RATE_LIMITED', '잠시 후 다시 시도해 주세요.');
   }
   function originAllowed(request: IncomingMessage, mutation: boolean): void {
     const host = request.headers.host || '';
     if (![...origins].some((origin) => new URL(origin).host === host)) fail(403, 'ORIGIN_REJECTED', '허용된 서비스 주소에서 요청해 주세요.');
     if ((mutation || request.headers.origin) && (!request.headers.origin || !origins.has(request.headers.origin))) fail(403, 'ORIGIN_REJECTED', '허용된 서비스 주소에서 요청해 주세요.');
   }
-  function session(request: IncomingMessage): { user: User; csrf: string; tokenHash: string } | null {
+  async function session(request: IncomingMessage): Promise<{ user: User; csrf: string; tokenHash: string } | null> {
     const cookies = (request.headers.cookie || '').split(';').map((v) => v.trim());
     const token = cookies.find((v) => v.startsWith('campus_session='))?.slice(15);
     if (!token || !/^[0-9a-f]{64}$/.test(token)) return null;
-    const row = repository.db.prepare('SELECT s.*,u.username,u.role,u.campus_ids FROM sessions s JOIN users u ON u.id=s.user_id WHERE token_hash=? AND expires_at>? AND u.disabled=0').get(hash(token), clock().toISOString());
+    const row = (await repository.db.prepare('SELECT s.*,u.username,u.role,u.campus_ids FROM sessions s JOIN users u ON u.id=s.user_id WHERE token_hash=? AND expires_at>? AND u.disabled=0').get(hash(token), clock().toISOString()));
     if (!row) return null;
     return { user: { id: String(row.user_id), username: String(row.username), role: row.role as Role, campusIds: JSON.parse(String(row.campus_ids)) }, csrf: String(row.csrf), tokenHash: hash(token) };
   }
-  function authorize(request: IncomingMessage, roles: Role[], mutation = false): User {
-    const active = session(request);
+  async function authorize(request: IncomingMessage, roles: Role[], mutation = false): Promise<User> {
+    const active = (await session(request));
     if (!active) return fail(401, 'AUTHENTICATION_REQUIRED', '로그인이 필요합니다.');
     if (!roles.includes(active.user.role)) return fail(403, 'FORBIDDEN', '이 작업을 수행할 권한이 없습니다.');
     if (mutation) {
@@ -181,8 +200,8 @@ export function createPlatform(options: Options) {
     if (!entity) fail(404, 'RESOURCE_NOT_FOUND', '공간을 찾을 수 없습니다.');
     if (user.role !== 'admin' && !user.campusIds.includes(String(entity.campusId))) fail(403, 'FORBIDDEN', '담당 캠퍼스의 자료만 관리할 수 있습니다.');
   }
-  function assertCatalogScope(user: User, next: JsonRecord): void {
-    assertCatalogReadable(user, repository.current());
+  async function assertCatalogScope(user: User, next: JsonRecord): Promise<void> {
+    assertCatalogReadable(user, (await repository.current()));
     assertCatalogReadable(user, next);
   }
   function canReadCatalog(user: User, catalog: JsonRecord): boolean {
@@ -198,9 +217,9 @@ export function createPlatform(options: Options) {
   function identityScopeSql(user: User): { sql: string; parameters: string[] } {
     return user.role === 'admin' ? { sql: '1=1', parameters: [] } : { sql: 'identity.campus_id IN (SELECT value FROM json_each(?))', parameters: [JSON.stringify(user.campusIds)] };
   }
-  function assertIdentityScope(user: User, id: string): void {
+  async function assertIdentityScope(user: User, id: string): Promise<void> {
     if (user.role === 'admin') return;
-    const identity = repository.db.prepare('SELECT campus_id FROM identities WHERE id=?').get(id);
+    const identity = (await repository.db.prepare('SELECT campus_id FROM identities WHERE id=?').get(id));
     if (!identity || !user.campusIds.includes(String(identity.campus_id))) fail(403, 'FORBIDDEN', '해당 캠퍼스의 기록만 관리할 수 있습니다.');
   }
   function pagination(url: URL, maximum = 100): { limit: number; offset: number } {
@@ -214,13 +233,13 @@ export function createPlatform(options: Options) {
     };
     return { limit: integer('limit', 1, maximum, maximum), offset: integer('offset', 0, 100_000, 0) };
   }
-  function checkedCatalog(input: unknown, user?: User): JsonRecord {
-    const catalog = object(input); const validation = user ? domain.validateImport(catalog, repository.current()) : domain.validateCatalog(catalog);
+  async function checkedCatalog(input: unknown, user?: User): Promise<JsonRecord> {
+    const catalog = object(input); const validation = user ? domain.validateImport(catalog, (await repository.current())) : domain.validateCatalog(catalog);
     if(catalog.assetManifest!==undefined){try{validateModelManifest(catalog.assetManifest);}catch{fail(422,'INVALID_ASSETS','?? ????????????? ??? ??? ???.');}}
     if (!validation.valid) fail(422, 'INVALID_CATALOG', `공간 자료를 검증하지 못했습니다. ${validation.errors.slice(0, 6).map((v) => typeof v === 'string' ? v : JSON.stringify(v)).join(' / ')}`);
     if (JSON.stringify(catalog).length > 4_000_000) fail(413, 'PAYLOAD_TOO_LARGE', '공간 자료는 4MB 이하로 등록해 주세요.');
     const normalized='catalog' in validation&&record(validation.catalog)?validation.catalog:catalog;
-    if (user) assertCatalogScope(user, normalized);
+    if (user) (await assertCatalogScope(user, normalized));
     return normalized;
   }
   function revision(body: JsonRecord, expected: number): void { if (!Number.isInteger(body.expectedRevision) || body.expectedRevision !== expected) { metrics.conflicts++; fail(409, 'REVISION_CONFLICT', '다른 변경이 있습니다. 최신 자료를 확인한 뒤 다시 시도해 주세요.'); } }
@@ -265,17 +284,17 @@ export function createPlatform(options: Options) {
   }
   function safeDraft(row: JsonRecord, user: User): JsonRecord { const catalog=object(JSON.parse(String(row.catalog)));assertCatalogReadable(user,catalog);return { id:row.id,catalog,summary:row.summary,status:row.status,authorId:row.author_id,reviewerId:row.reviewer_id,revision:Number(row.revision),baseRevision:Number(row.base_revision),createdAt:row.created_at,updatedAt:row.updated_at }; }
   function safeReport(row: JsonRecord): JsonRecord { return { id:row.id,spaceId:row.space_id,type:row.type,description:row.description,status:row.status,hasPhoto:!!row.photo,responseNote:row.response_note,createdAt:row.created_at,updatedAt:row.updated_at }; }
-  function publicOperations(page?: {limit:number;offset:number}): JsonRecord[] {
-    const full=repository.current();
+  async function publicOperations(page?: {limit:number;offset:number}): Promise<JsonRecord[]> {
+    const full=(await repository.current());
     const visible=domain.publicCatalog(full);
     const sql="SELECT payload FROM operations WHERE json_extract(payload,'$.visibility')='public' AND json_extract(payload,'$.status') IS NOT 'cancelled' AND entity_id IN (SELECT value FROM json_each(?)) AND NOT EXISTS (SELECT 1 FROM json_each(payload,'$.sourceIds') source WHERE source.value NOT IN (SELECT value FROM json_each(?))) ORDER BY updated_at DESC,id DESC";
     const parameters=[JSON.stringify(arrayRecords(visible.entities).map((entity)=>entity.id)),JSON.stringify(arrayRecords(visible.sources).map((source)=>source.id))];
-    const rows=page?repository.db.prepare(`${sql} LIMIT ? OFFSET ?`).all(...parameters,page.limit+1,page.offset):repository.db.prepare(sql).all(...parameters);
+    const rows=page?(await repository.db.prepare(`${sql} LIMIT ? OFFSET ?`).all(...parameters,page.limit+1,page.offset)):(await repository.db.prepare(sql).all(...parameters));
     full.operations=rows.map((row)=>object(JSON.parse(String(row.payload))));
     return arrayRecords(domain.publicCatalog(full).operations);
   }
-  function makeOperation(body: JsonRecord, user: User, now: string): JsonRecord {
-    const suppliedId=text(body.entityId,180,'공간'),current=repository.current();assertEntityScope(user,current,suppliedId);
+  async function makeOperation(body: JsonRecord, user: User, now: string): Promise<JsonRecord> {
+    const suppliedId=text(body.entityId,180,'공간'),current=(await repository.current());assertEntityScope(user,current,suppliedId);
     const entityId=String(domain.resolve(current,suppliedId)!.id);
     const title=text(body.title||body.label,200,'제목'),owner=text(body.owner,100,'관리 부서'),statusValue=text(body.status||body.state,30,'운영 상태');
     if(!['open','closed','restricted','unknown','construction','cancelled'].includes(statusValue))fail(422,'INVALID_STATUS','운영 상태를 확인해 주세요.');
@@ -294,16 +313,16 @@ export function createPlatform(options: Options) {
     if(body.visibility!==undefined&&!['restricted','public'].includes(String(body.visibility)))fail(422,'INVALID_INPUT','공개 범위를 확인해 주세요.');
     const visibility=body.visibility==='restricted'?'restricted':'public';
     const sourceId=text(body.sourceId||(Array.isArray(body.sourceIds)?body.sourceIds[0]:null),180,'출처');
-    if(!arrayRecords(repository.current().sources).some((source)=>source.id===sourceId))fail(422,'INVALID_SOURCE','등록된 출처를 선택해 주세요.');
+    if(!arrayRecords((await repository.current()).sources).some((source)=>source.id===sourceId))fail(422,'INVALID_SOURCE','등록된 출처를 선택해 주세요.');
     return {id:body.id?text(body.id,100,'운영 정보 ID'):randomUUID(),entityId,title,label:`${title} · ${owner}`,owner,status:statusValue,state:statusValue==='open'?'open':'closed',startsAt,endsAt,validFrom:startsAt,validUntil:statusValue==='cancelled'?now:endsAt,observedAt:now,visibility,sourceId,sourceIds:[sourceId],verification:statusValue==='unknown'?'unverified':'verified',reviewedAt:now,reviewerId:user.id,updatedAt:now};
   }
-  function ensureBundle(id:string,full:JsonRecord,at:string){
-    const known=readReleaseBundle(repository.db,id);if(known)return known;
-    const prepared=checkedPublicBundle(id,full,at);
-    repository.transaction(()=>storeReleaseBundle(repository.db,prepared));return prepared.bundle;
+  async function ensureBundle(id:string,full:JsonRecord,at:string){
+    const known=(await readReleaseBundle(repository.db,id));if(known)return known;
+    const prepared=(await checkedPublicBundle(id,full,at));
+    (await repository.transaction(async ()=>(await storeReleaseBundle(repository.db,prepared))));return prepared.bundle;
   }
-  function checkedPublicBundle(id:string,full:JsonRecord,at:string){
-    try{return prepareReleaseBundle(options.assetRoot||options.root,id,domain.publicCatalog(full),at,repository.db);}
+  async function checkedPublicBundle(id:string,full:JsonRecord,at:string){
+    try{return (await prepareReleaseBundle(options.assetRoot||options.root,id,domain.publicCatalog(full),at,repository.db));}
     catch{fail(422,'INVALID_PUBLIC_ASSETS','공개 자산의 경로·SHA·형상·공개성 검증을 통과하지 못했습니다. 등록 파일과 제작 보고서를 확인해 주세요.');}
   }
   async function handle(request: IncomingMessage, response: ServerResponse): Promise<boolean> {
@@ -311,143 +330,179 @@ export function createPlatform(options: Options) {
     const requestId = randomUUID(), started = performance.now(); metrics.requests++;
     const headers = { 'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'same-origin','X-Request-Id':requestId,'Content-Security-Policy':"default-src 'none'; frame-ancestors 'none'" };
     let status = 200;
-    const send = (data: unknown, code = 200, extra: Record<string,string> = {}, meta: JsonRecord = {}) => { status=code; response.writeHead(code, { ...headers,...extra }); response.end(JSON.stringify({ data,error:null,meta:{requestId,revision:repository.revision(),...meta} })); };
-    const sendPage = (rows: JsonRecord[], page: {limit:number;offset:number}, transform: (row: JsonRecord) => unknown = (row) => row) => {
+    const pending: { reply?: { code: number; headers: Record<string,string>; body: Buffer } } = {};
+    const send = async (data: unknown, code = 200, extra: Record<string,string> = {}, meta: JsonRecord = {}) => {
+      status=code;
+      pending.reply={code,headers:{...headers,...extra},body:Buffer.from(JSON.stringify({data,error:null,meta:{requestId,revision:await repository.revision(),...meta}}))};
+    };
+    const sendBinary = (body: Buffer | undefined, extra: Record<string,string>) => { pending.reply={code:200,headers:{...headers,...extra},body:body||Buffer.alloc(0)}; };
+    const sendPage = async (rows: JsonRecord[], page: {limit:number;offset:number}, transform: (row: JsonRecord) => unknown = (row) => row) => {
       const hasMore=rows.length>page.limit;
-      send(rows.slice(0,page.limit).map(transform),200,{}, {pagination:{...page,hasMore,nextOffset:hasMore&&page.offset+page.limit<=100_000?page.offset+page.limit:null}});
+      (await send(rows.slice(0,page.limit).map(transform),200,{}, {pagination:{...page,hasMore,nextOffset:hasMore&&page.offset+page.limit<=100_000?page.offset+page.limit:null}}));
     };
     try {
       const method = request.method || 'GET'; const mutation = !['GET','HEAD'].includes(method); originAllowed(request,mutation);
       if (!['GET','HEAD','POST','PATCH','DELETE'].includes(method)) fail(405,'METHOD_NOT_ALLOWED','지원하지 않는 요청입니다.');
       const url = new URL(request.url, [...origins][0]); const path = url.pathname; const now=clock().toISOString();
-      const client = hash(clientAddress(request)); rate(`api:${client}`,300,60_000);
-      if (path === '/api/v1/health' && method === 'GET') { send({status:'ok',schemaVersion:3,catalogSchemaVersion:1,revision:repository.revision(),startedAt}); return true; }
-      if (path === '/api/v1/session' && method === 'GET') { const active=session(request); send({user:active?.user || null,csrfToken:active?.csrf,adminConfigured:Number(repository.db.prepare('SELECT COUNT(*) count FROM users WHERE disabled=0').get()?.count)>0}); return true; }
+      const client = hash(clientAddress(request)); (await rate(`api:${client}`,300,60_000));
+      if(method==='POST'&&path==='/api/v1/session') await rate(`login:${client}`,8,15*60_000);
+      if(method==='POST'&&path==='/api/v1/reports') await rate(`report:${client}`,6,60*60_000);
+      if(method==='POST'&&path==='/api/v1/assistant') await rate(`assistant:${client}`,15,60_000);
+      const dispatch = async (): Promise<boolean> => {
+      if (path === '/api/v1/health' && method === 'GET') { (await send({status:'ok',schemaVersion:4,catalogSchemaVersion:1,revision:(await repository.revision()),startedAt})); return true; }
+      if (path === '/api/v1/session' && method === 'GET') { const active=(await session(request)); (await send({user:active?.user || null,csrfToken:active?.csrf,adminConfigured:Number((await repository.db.prepare('SELECT COUNT(*) count FROM users WHERE disabled=0').get())?.count)>0})); return true; }
       if (path === '/api/v1/session' && method === 'POST') {
-        rate(`login:${client}`,8,15*60_000); const body=await readBody(request); const username=text(body.username,64,'계정'); const password=typeof body.password==='string'?body.password:'';
-        const user=repository.db.prepare('SELECT * FROM users WHERE username=? AND disabled=0').get(username); const valid=verifyPassword(password,user?String(user.password_hash):dummyPassword);
+        const body=await readBody(request); const username=text(body.username,64,'계정'); const password=typeof body.password==='string'?body.password:'';
+        const user=(await repository.db.prepare('SELECT * FROM users WHERE username=? AND disabled=0').get(username)); const valid=verifyPassword(password,user?String(user.password_hash):dummyPassword);
         if (!user || !valid) fail(401,'INVALID_CREDENTIALS','계정과 비밀번호를 확인해 주세요.');
         const token=randomBytes(32).toString('hex'),csrf=randomBytes(32).toString('hex'),expires=new Date(clock().getTime()+8*60*60_000).toISOString();
-        repository.db.prepare('DELETE FROM sessions WHERE expires_at<=?').run(now); repository.db.prepare('INSERT INTO sessions VALUES(?,?,?,?)').run(hash(token),String(user.id),csrf,expires); repository.audit(String(user.id),'session.created',null,now);
-        send({user:{id:user.id,username:user.username,role:user.role,campusIds:JSON.parse(String(user.campus_ids))},csrfToken:csrf},200,{'Set-Cookie':`campus_session=${token}; HttpOnly; SameSite=Strict; Path=/api/v1; Max-Age=28800${options.secureCookies?'; Secure':''}`}); return true;
+        (await repository.db.prepare('DELETE FROM sessions WHERE expires_at<=?').run(now)); (await repository.db.prepare('INSERT INTO sessions VALUES(?,?,?,?)').run(hash(token),String(user.id),csrf,expires)); (await repository.audit(String(user.id),'session.created',null,now));
+        (await send({user:{id:user.id,username:user.username,role:user.role,campusIds:JSON.parse(String(user.campus_ids))},csrfToken:csrf},200,{'Set-Cookie':`campus_session=${token}; HttpOnly; SameSite=Strict; Path=/api/v1; Max-Age=28800${options.secureCookies?'; Secure':''}`})); return true;
       }
-      if (path === '/api/v1/session' && method === 'DELETE') { const user=authorize(request,['admin','editor','reviewer'],true); const active=session(request)!; repository.db.prepare('DELETE FROM sessions WHERE token_hash=?').run(active.tokenHash); repository.audit(user.id,'session.deleted',null,now); send({loggedOut:true},200,{'Set-Cookie':`campus_session=; HttpOnly; SameSite=Strict; Path=/api/v1; Max-Age=0${options.secureCookies?'; Secure':''}`}); return true; }
+      if (path === '/api/v1/session' && method === 'DELETE') { const user=(await authorize(request,['admin','editor','reviewer'],true)); const active=(await session(request))!; (await repository.db.prepare('DELETE FROM sessions WHERE token_hash=?').run(active.tokenHash)); (await repository.audit(user.id,'session.deleted',null,now)); (await send({loggedOut:true},200,{'Set-Cookie':`campus_session=; HttpOnly; SameSite=Strict; Path=/api/v1; Max-Age=0${options.secureCookies?'; Secure':''}`})); return true; }
       const snapshotMatch=path.match(/^\/assets\/releases\/([a-f0-9]{64})(\.[a-z0-9]+)$/);
       if(snapshotMatch&&['GET','HEAD'].includes(method)){
-        const row=repository.db.prepare('SELECT body,mime_type,bytes FROM public_asset_blobs WHERE sha256=? AND extension=? AND EXISTS(SELECT 1 FROM release_asset_links WHERE sha256=public_asset_blobs.sha256 AND extension=public_asset_blobs.extension)').get(snapshotMatch[1],snapshotMatch[2]);
+        const row=(await repository.db.prepare('SELECT body,mime_type,bytes FROM public_asset_blobs WHERE sha256=? AND extension=? AND EXISTS(SELECT 1 FROM release_asset_links WHERE sha256=public_asset_blobs.sha256 AND extension=public_asset_blobs.extension)').get(snapshotMatch[1],snapshotMatch[2]));
         if(!row)fail(404,'RESOURCE_NOT_FOUND','공개 자산을 찾을 수 없습니다.');
-        response.writeHead(200,{...headers,'Content-Type':String(row.mime_type),'Content-Length':String(row.bytes),'Cache-Control':'public,max-age=31536000,immutable'});response.end(method==='HEAD'?undefined:Buffer.from(row.body as Uint8Array));return true;
+        sendBinary(method==='HEAD'?undefined:Buffer.from(row.body as Uint8Array),{'Content-Type':String(row.mime_type),'Content-Length':String(row.bytes),'Cache-Control':'public,max-age=31536000,immutable'});return true;
       }
       if(path==='/api/v1/bundle'&&method==='GET'){
-        const id=url.searchParams.get('release')||repository.setting('currentRelease')!;
+        const id=url.searchParams.get('release')||(await repository.setting('currentRelease'))!;
         if(!/^[a-f0-9-]{36}$/.test(id))fail(422,'INVALID_RELEASE','공개판 ID를 확인해 주세요.');
-        const row=repository.db.prepare('SELECT catalog,created_at FROM releases WHERE id=?').get(id);if(!row)fail(404,'RESOURCE_NOT_FOUND','승인된 공개판을 찾을 수 없습니다.');
-        const bundle=ensureBundle(id,object(JSON.parse(String(row.catalog))),String(row.created_at));send(bundle);return true;
+        const row=(await repository.db.prepare('SELECT catalog,created_at FROM releases WHERE id=?').get(id));if(!row)fail(404,'RESOURCE_NOT_FOUND','승인된 공개판을 찾을 수 없습니다.');
+        const bundle=(await ensureBundle(id,object(JSON.parse(String(row.catalog))),String(row.created_at)));(await send(bundle));return true;
       }
       if (path === '/api/v1/catalog' && method === 'GET') {
-        const releaseId=url.searchParams.get('release'); const row=releaseId?repository.db.prepare('SELECT catalog FROM releases WHERE id=?').get(releaseId):null; if(releaseId&&!row)fail(404,'RESOURCE_NOT_FOUND','공개판을 찾을 수 없습니다.'); const full=row?object(JSON.parse(String(row.catalog))):repository.current(); const catalog=domain.publicCatalog(full);
-        if(!releaseId)catalog.operations=[...arrayRecords(catalog.operations),...publicOperations()]; const id=releaseId||repository.setting('currentRelease')!; const bundle=ensureBundle(id,full,now); catalog.assetManifest=bundle.manifest;catalog.assetsVersion=bundle.assetsVersion; send(catalog,200,{}, {releaseId:id,bundleHash:bundle.catalogHash,mediaRecords:bundle.mediaRecords}); return true;
+        const releaseId=url.searchParams.get('release'); const row=releaseId?(await repository.db.prepare('SELECT catalog FROM releases WHERE id=?').get(releaseId)):null; if(releaseId&&!row)fail(404,'RESOURCE_NOT_FOUND','공개판을 찾을 수 없습니다.'); const full=row?object(JSON.parse(String(row.catalog))):(await repository.current()); const catalog=domain.publicCatalog(full);
+        if(!releaseId)catalog.operations=[...arrayRecords(catalog.operations),...(await publicOperations())]; const id=releaseId||(await repository.setting('currentRelease'))!; const bundle=(await ensureBundle(id,full,now)); catalog.assetManifest=bundle.manifest;catalog.assetsVersion=bundle.assetsVersion; (await send(catalog,200,{}, {releaseId:id,bundleHash:bundle.catalogHash,mediaRecords:bundle.mediaRecords})); return true;
       }
       if(path==='/api/v1/assistant/status'&&method==='GET'){
-        const current=domain.publicCatalog(repository.current());const sources=new Set(arrayRecords(current.sources).filter(source=>source.visibility==='public'&&source.confidence==='verified').map(source=>source.id));
-        send({providers:providers.filter(provider=>provider.enabled&&provider.kind==='assistant'&&sources.has(provider.sourceId)).map(provider=>({id:provider.id,campusId:provider.campusId,sourceId:provider.sourceId})),mode:'approved-catalog-only'});return true;
+        const current=domain.publicCatalog((await repository.current()));const sources=new Set(arrayRecords(current.sources).filter(source=>source.visibility==='public'&&source.confidence==='verified').map(source=>source.id));
+        (await send({providers:providers.filter(provider=>provider.enabled&&provider.kind==='assistant'&&sources.has(provider.sourceId)).map(provider=>({id:provider.id,campusId:provider.campusId,sourceId:provider.sourceId})),mode:'approved-catalog-only'}));return true;
       }
       if(path==='/api/v1/assistant'&&method==='POST'){
-        rate(`assistant:${client}`,15,60_000);const body=await readBody(request),current=domain.publicCatalog(repository.current());
+        const body=await readBody(request),current=domain.publicCatalog((await repository.current()));
         const question=text(body.question,500,'질문'),campusId=text(body.campusId,160,'캠퍼스'),contentVersion=text(body.contentVersion,160,'자료판');
         if(contentVersion!==current.contentVersion)fail(409,'CATALOG_CHANGED','자료판이 변경되었습니다. 새로고침한 뒤 다시 질문해 주세요.');
         if(!arrayRecords(current.campuses).some(campus=>campus.id===campusId))fail(422,'INVALID_CAMPUS','등록된 캠퍼스를 선택해 주세요.');
-        const result=await answerApprovedQuestion({catalog:current as unknown as CampusCatalog,question,campusId,contentVersion,purpose:typeof body.purpose==='string'?body.purpose:undefined},providers,providerTransport);send(result);return true;
+        const result=await answerApprovedQuestion({catalog:current as unknown as CampusCatalog,question,campusId,contentVersion,purpose:typeof body.purpose==='string'?body.purpose:undefined},providers,providerTransport);(await send(result));return true;
       }
-      if (path === '/api/v1/releases' && method === 'GET') { const page=pagination(url);sendPage(repository.db.prepare("SELECT id,created_at AS createdAt,json_extract(catalog,'$.contentVersion') AS contentVersion FROM releases ORDER BY created_at DESC,id DESC LIMIT ? OFFSET ?").all(page.limit+1,page.offset),page); return true; }
-      if (path === '/api/v1/operations' && method === 'GET') { const page=pagination(url);sendPage(publicOperations(page),page); return true; }
-      if (path.startsWith('/api/v1/spaces/') && method === 'GET') { const id=decodeURIComponent(path.slice('/api/v1/spaces/'.length)); const current=domain.publicCatalog(repository.current()); const entity=domain.resolve(current,id); if(entity)send(entity); else if(repository.db.prepare('SELECT id FROM identities WHERE id=? AND retired=1').get(id))fail(410,'SPACE_RETIRED','이 공간은 현재 공개판에서 변경되었습니다. 전체 보기에서 목적지를 다시 확인해 주세요.'); else fail(404,'RESOURCE_NOT_FOUND','공간을 찾을 수 없습니다.'); return true; }
+      if (path === '/api/v1/releases' && method === 'GET') { const page=pagination(url);(await sendPage((await repository.db.prepare("SELECT id,created_at AS createdAt,json_extract(catalog,'$.contentVersion') AS contentVersion FROM releases ORDER BY created_at DESC,id DESC LIMIT ? OFFSET ?").all(page.limit+1,page.offset)),page)); return true; }
+      if (path === '/api/v1/operations' && method === 'GET') { const page=pagination(url);(await sendPage((await publicOperations(page)),page)); return true; }
+      if (path.startsWith('/api/v1/spaces/') && method === 'GET') { const id=decodeURIComponent(path.slice('/api/v1/spaces/'.length)); const current=domain.publicCatalog((await repository.current())); const entity=domain.resolve(current,id); if(entity)(await send(entity)); else if((await repository.db.prepare('SELECT id FROM identities WHERE id=? AND retired=1').get(id)))fail(410,'SPACE_RETIRED','이 공간은 현재 공개판에서 변경되었습니다. 전체 보기에서 목적지를 다시 확인해 주세요.'); else fail(404,'RESOURCE_NOT_FOUND','공간을 찾을 수 없습니다.'); return true; }
       if (path === '/api/v1/reports' && method === 'POST') {
-        rate(`report:${client}`,6,60*60_000); const body=await readBody(request); const spaceId=text(body.spaceId,180,'공간'); const entity=domain.resolve(domain.publicCatalog(repository.current()),spaceId); if(!entity)fail(422,'INVALID_SPACE','공개된 공간을 선택해 주세요.'); const type=text(body.type,30,'문제 유형'); if(!['location','name','access','facility','other','map','information','closure'].includes(type))fail(422,'INVALID_REPORT_TYPE','문제 유형을 확인해 주세요.');
-        const description=text(body.description,3000,'내용'); const key=text(body.idempotencyKey,100,'접수 키'); if(!/^[a-zA-Z0-9_-]{8,100}$/.test(key))fail(422,'INVALID_INPUT','접수 키를 확인해 주세요.'); const photo=safePhoto(body.photo); const requestHash=hash(JSON.stringify({spaceId:entity.id,type,description,photo:photo?hash(photo.data):null})); const existing=repository.db.prepare('SELECT * FROM reports WHERE idempotency_key=?').get(key);
-        if(existing){if(existing.request_hash!==requestHash)fail(409,'IDEMPOTENCY_CONFLICT','접수 키가 다른 내용에 사용되었습니다.');send({id:existing.id,status:existing.status,createdAt:existing.created_at,receiptToken:receiptToken(String(existing.id))},200);return true;}
-        const id=randomUUID(); repository.db.prepare('INSERT INTO reports(id,space_id,type,description,status,photo,photo_mime,idempotency_key,request_hash,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)').run(id,String(entity.id),type,description,'received',photo?.data||null,photo?.mime||null,key,requestHash,now,now); repository.audit(null,'report.received',id,now);metrics.reportsReceived++;send({id,status:'received',createdAt:now,receiptToken:receiptToken(id)},201);return true;
+        const body=await readBody(request); const spaceId=text(body.spaceId,180,'공간'); const entity=domain.resolve(domain.publicCatalog((await repository.current())),spaceId); if(!entity)fail(422,'INVALID_SPACE','공개된 공간을 선택해 주세요.'); const type=text(body.type,30,'문제 유형'); if(!['location','name','access','facility','other','map','information','closure'].includes(type))fail(422,'INVALID_REPORT_TYPE','문제 유형을 확인해 주세요.');
+        const description=text(body.description,3000,'내용'); const key=text(body.idempotencyKey,100,'접수 키'); if(!/^[a-zA-Z0-9_-]{8,100}$/.test(key))fail(422,'INVALID_INPUT','접수 키를 확인해 주세요.'); const photo=safePhoto(body.photo); const requestHash=hash(JSON.stringify({spaceId:entity.id,type,description,photo:photo?hash(photo.data):null})); const existing=(await repository.db.prepare('SELECT * FROM reports WHERE idempotency_key=?').get(key));
+        if(existing){if(existing.request_hash!==requestHash)fail(409,'IDEMPOTENCY_CONFLICT','접수 키가 다른 내용에 사용되었습니다.');(await send({id:existing.id,status:existing.status,createdAt:existing.created_at,receiptToken:(await receiptToken(String(existing.id)))},200));return true;}
+        const id=randomUUID(); (await repository.db.prepare('INSERT INTO reports(id,space_id,type,description,status,photo,photo_mime,idempotency_key,request_hash,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)').run(id,String(entity.id),type,description,'received',photo?.data||null,photo?.mime||null,key,requestHash,now,now)); (await repository.audit(null,'report.received',id,now));metrics.reportsReceived++;(await send({id,status:'received',createdAt:now,receiptToken:(await receiptToken(id))},201));return true;
       }
       const receiptMatch=path.match(/^\/api\/v1\/reports\/([a-f0-9-]+)$/);
       if(receiptMatch&&method==='GET'){
         const token=request.headers['x-report-receipt'];
-        if(typeof token!=='string'||!(/^[a-f0-9]{64}$/).test(token)||!timingSafeEqual(Buffer.from(token,'hex'),Buffer.from(receiptToken(receiptMatch[1]),'hex')))fail(404,'RESOURCE_NOT_FOUND','접수번호와 조회 키를 확인해 주세요.');
-        const row=repository.db.prepare('SELECT id,status,response_note,created_at,updated_at FROM reports WHERE id=?').get(receiptMatch[1]);
+        if(typeof token!=='string'||!(/^[a-f0-9]{64}$/).test(token)||!timingSafeEqual(Buffer.from(token,'hex'),Buffer.from((await receiptToken(receiptMatch[1])),'hex')))fail(404,'RESOURCE_NOT_FOUND','접수번호와 조회 키를 확인해 주세요.');
+        const row=(await repository.db.prepare('SELECT id,status,response_note,created_at,updated_at FROM reports WHERE id=?').get(receiptMatch[1]));
         if(!row)fail(404,'RESOURCE_NOT_FOUND','접수번호와 조회 키를 확인해 주세요.');
-        send({id:row.id,status:row.status,responseNote:row.response_note,createdAt:row.created_at,updatedAt:row.updated_at});return true;
+        (await send({id:row.id,status:row.status,responseNote:row.response_note,createdAt:row.created_at,updatedAt:row.updated_at}));return true;
       }
       if (!path.startsWith('/api/v1/admin/')) fail(404,'RESOURCE_NOT_FOUND','요청한 리소스를 찾을 수 없습니다.');
-      const user=authorize(request,['admin','editor','reviewer'],mutation);
+      const user=(await authorize(request,['admin','editor','reviewer'],mutation));
       if(path==='/api/v1/admin/providers'&&method==='GET'){
-        send(providers.filter(p=>user.role==='admin'||user.campusIds.includes(p.campusId)).map(provider=>{const row=repository.db.prepare('SELECT * FROM provider_runs WHERE provider_id=?').get(provider.id),draft=row?.draft_id?repository.db.prepare('SELECT catalog FROM drafts WHERE id=?').get(String(row.draft_id)):null;return {id:provider.id,kind:provider.kind,campusId:provider.campusId,sourceId:provider.sourceId,enabled:provider.enabled,state:row?.state||'unconfigured',lastAttemptAt:row?.last_attempt_at||null,lastSuccessAt:row?.last_success_at||null,draftId:draft&&canReadCatalog(user,object(JSON.parse(String(draft.catalog))))?row?.draft_id:null,errorCode:row?.error_code||null};}));return true;
+        (await send(await Promise.all(providers.filter(p=>user.role==='admin'||user.campusIds.includes(p.campusId)).map(async provider=>{const row=(await repository.db.prepare('SELECT * FROM provider_runs WHERE provider_id=?').get(provider.id)),draft=row?.draft_id?(await repository.db.prepare('SELECT catalog FROM drafts WHERE id=?').get(String(row.draft_id))):null;return {id:provider.id,kind:provider.kind,campusId:provider.campusId,sourceId:provider.sourceId,enabled:provider.enabled,state:row?.state||'unconfigured',lastAttemptAt:row?.last_attempt_at||null,lastSuccessAt:row?.last_success_at||null,draftId:draft&&canReadCatalog(user,object(JSON.parse(String(draft.catalog))))?row?.draft_id:null,errorCode:row?.error_code||null};}))));return true;
       }
       const providerMatch=path.match(/^\/api\/v1\/admin\/providers\/([a-z0-9_-]+)\/sync$/);
       if(providerMatch&&method==='POST'){
-        const body=await readBody(request);revision(body,repository.revision());
+        const body=await readBody(request);revision(body,(await repository.revision()));
         const provider=providers.find(p=>p.id===providerMatch[1]);
         if(!provider)fail(404,'RESOURCE_NOT_FOUND','등록된 연동이 없습니다.');
         if(!provider.enabled)fail(409,'PROVIDER_DISABLED','연동이 아직 활성화되지 않았습니다.');
         if(user.role!=='admin'&&!user.campusIds.includes(provider.campusId))fail(403,'FORBIDDEN','담당 캠퍼스의 연동만 실행할 수 있습니다.');
-        assertCatalogReadable(user,repository.current());
-        if(providerBusy.has(provider.id))fail(409,'PROVIDER_BUSY','이미 자료를 가져오고 있습니다.');
-        providerBusy.add(provider.id);const prior=repository.db.prepare('SELECT * FROM provider_runs WHERE provider_id=?').get(provider.id);
+        assertCatalogReadable(user,(await repository.current()));
+        const leaseOwner=randomUUID(),leaseNow=clock().getTime();
+        const leased=await repository.db.prepare('INSERT INTO provider_leases VALUES(?,?,?) ON CONFLICT(provider_id) DO UPDATE SET owner=excluded.owner,expires_at=excluded.expires_at WHERE provider_leases.expires_at<=? RETURNING owner').get(provider.id,leaseOwner,leaseNow+60_000,leaseNow);
+        if(leased?.owner!==leaseOwner)fail(409,'PROVIDER_BUSY','이미 자료를 가져오고 있습니다.');
+        const prior=(await repository.db.prepare('SELECT * FROM provider_runs WHERE provider_id=?').get(provider.id));
         try{
           const incoming=await providerTransport(provider);let catalog:JsonRecord;
           if(provider.kind==='catalog')catalog=object(incoming);
-          else{if(!Array.isArray(incoming)||incoming.length>1000)fail(422,'INVALID_PROVIDER_DATA','운영 정보 목록 형식을 확인해 주세요.');catalog=repository.current();catalog.operations=incoming.map(entry=>({...object(entry),sourceIds:[provider.sourceId],verification:'unverified'}));catalog.contentVersion=`${String(catalog.contentVersion)}-import-${hash(JSON.stringify(incoming)).slice(0,12)}`;catalog.datasetVersion=catalog.contentVersion;}
-          catalog=checkedCatalog(catalog,user);
-          revision(body,repository.revision());
-          if(!arrayRecords(catalog.campuses).some(c=>c.id===provider.campusId)||!arrayRecords(catalog.sources).some(s=>s.id===provider.sourceId))fail(422,'INVALID_PROVIDER_DATA','연동의 캠퍼스와 출처를 확인해 주세요.');
-          const summary=`외부 자료 ${provider.id}: 검토 후 공개`,serialized=JSON.stringify(catalog);
-          const duplicate=repository.db.prepare("SELECT id FROM drafts WHERE catalog=? AND summary=? AND status IN('draft','submitted','approved') ORDER BY created_at DESC LIMIT 1").get(serialized,summary);
-          const id=duplicate?String(duplicate.id):randomUUID(),completed=clock().toISOString();
-          repository.transaction(()=>{if(!duplicate)repository.db.prepare('INSERT INTO drafts(id,catalog,summary,status,author_id,revision,base_revision,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?)').run(id,serialized,summary,'draft',user.id,1,repository.revision(),completed,completed);repository.db.prepare('INSERT INTO provider_runs VALUES(?,?,?,?,?,?) ON CONFLICT(provider_id) DO UPDATE SET state=excluded.state,last_attempt_at=excluded.last_attempt_at,last_success_at=excluded.last_success_at,draft_id=excluded.draft_id,error_code=NULL').run(provider.id,'success',now,completed,id,null);repository.audit(user.id,'provider.imported',provider.id,completed);});
-          send({providerId:provider.id,draftId:id,state:'success',lastSuccessAt:completed,requiresReview:true,duplicate:!!duplicate},duplicate?200:201);
-        }catch(error){const code=error instanceof ApiError?error.code:error instanceof Error&&/^[A-Z_]{1,80}$/.test(error.message)?error.message:'PROVIDER_UNAVAILABLE';repository.db.prepare('INSERT INTO provider_runs VALUES(?,?,?,?,?,?) ON CONFLICT(provider_id) DO UPDATE SET state=excluded.state,last_attempt_at=excluded.last_attempt_at,error_code=excluded.error_code').run(provider.id,'failed',now,prior?.last_success_at||null,prior?.draft_id||null,code);repository.audit(user.id,'provider.failed',provider.id,now);fail(503,'PROVIDER_UNAVAILABLE','자료를 가져오지 못했습니다. 기존 공개판과 마지막 성공 시각은 유지됩니다.');}
-        finally{providerBusy.delete(provider.id);}return true;
+          else{if(!Array.isArray(incoming)||incoming.length>1000)fail(422,'INVALID_PROVIDER_DATA','운영 정보 목록 형식을 확인해 주세요.');catalog=(await repository.current());catalog.operations=incoming.map(entry=>({...object(entry),sourceIds:[provider.sourceId],verification:'unverified'}));catalog.contentVersion=`${String(catalog.contentVersion)}-import-${hash(JSON.stringify(incoming)).slice(0,12)}`;catalog.datasetVersion=catalog.contentVersion;}
+          await repository.transaction(async ()=>{
+            const active=await authorize(request,['admin','editor','reviewer'],true);
+            const lease=await repository.db.prepare('SELECT owner,expires_at FROM provider_leases WHERE provider_id=?').get(provider.id);
+            if(lease?.owner!==leaseOwner||Number(lease.expires_at)<=clock().getTime())fail(409,'PROVIDER_BUSY','연동 잠금이 만료되었습니다. 다시 시도해 주세요.');
+            if(active.role!=='admin'&&!active.campusIds.includes(provider.campusId))fail(403,'FORBIDDEN','담당 캠퍼스의 연동만 실행할 수 있습니다.');
+            catalog=await checkedCatalog(catalog,active);
+            revision(body,await repository.revision());
+            if(!arrayRecords(catalog.campuses).some(c=>c.id===provider.campusId)||!arrayRecords(catalog.sources).some(s=>s.id===provider.sourceId))fail(422,'INVALID_PROVIDER_DATA','연동의 캠퍼스와 출처를 확인해 주세요.');
+            const summary=`외부 자료 ${provider.id}: 검토 후 공개`,serialized=JSON.stringify(catalog);
+            const duplicate=await repository.db.prepare("SELECT id FROM drafts WHERE catalog=? AND summary=? AND status IN('draft','submitted','approved') ORDER BY created_at DESC LIMIT 1").get(serialized,summary);
+            const id=duplicate?String(duplicate.id):randomUUID(),completed=clock().toISOString();
+            if(!duplicate)await repository.db.prepare('INSERT INTO drafts(id,catalog,summary,status,author_id,revision,base_revision,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?)').run(id,serialized,summary,'draft',active.id,1,await repository.revision(),completed,completed);
+            await repository.db.prepare('INSERT INTO provider_runs VALUES(?,?,?,?,?,?) ON CONFLICT(provider_id) DO UPDATE SET state=excluded.state,last_attempt_at=excluded.last_attempt_at,last_success_at=excluded.last_success_at,draft_id=excluded.draft_id,error_code=NULL').run(provider.id,'success',now,completed,id,null);
+            await repository.audit(active.id,'provider.imported',provider.id,completed);
+            await send({providerId:provider.id,draftId:id,state:'success',lastSuccessAt:completed,requiresReview:true,duplicate:!!duplicate},duplicate?200:201);
+          });
+        }catch(error){
+          const code=error instanceof ApiError?error.code:error instanceof Error&&/^[A-Z_]{1,80}$/.test(error.message)?error.message:'PROVIDER_UNAVAILABLE';
+          await repository.transaction(async()=>{
+            if((await repository.db.prepare('SELECT owner FROM provider_leases WHERE provider_id=?').get(provider.id))?.owner!==leaseOwner)return;
+            await repository.db.prepare('INSERT INTO provider_runs VALUES(?,?,?,?,?,?) ON CONFLICT(provider_id) DO UPDATE SET state=excluded.state,last_attempt_at=excluded.last_attempt_at,error_code=excluded.error_code').run(provider.id,'failed',now,prior?.last_success_at?String(prior.last_success_at):null,prior?.draft_id?String(prior.draft_id):null,code);
+            await repository.audit(user.id,'provider.failed',provider.id,now);
+          });
+          fail(503,'PROVIDER_UNAVAILABLE','자료를 가져오지 못했습니다. 기존 공개판과 마지막 성공 시각은 유지됩니다.');
+        }
+        finally{await repository.db.prepare('DELETE FROM provider_leases WHERE provider_id=? AND owner=?').run(provider.id,leaseOwner);}return true;
       }
       if(path==='/api/v1/admin/status'&&method==='GET'){
-        const current=repository.current(),allCampuses=canReadCatalog(user,current),draftScope=catalogScopeSql(user,'drafts'),reportScope=identityScopeSql(user);
-        send({catalogRevision:repository.revision(),currentRelease:repository.setting('currentRelease'),startedAt,metrics:allCampuses?metrics:{},drafts:repository.db.prepare(`SELECT id,status,revision,summary FROM drafts WHERE ${draftScope.sql} ORDER BY updated_at DESC,id DESC LIMIT 100`).all(...draftScope.parameters),reportCount:Number(repository.db.prepare(`SELECT COUNT(*) count FROM reports LEFT JOIN identities identity ON identity.id=reports.space_id WHERE ${reportScope.sql}`).get(...reportScope.parameters)?.count),sources:allCampuses?arrayRecords(current.sources).map((s)=>({id:s.id,dates:s.dates,owner:s.owner||null})):[],integrations:allCampuses?arrayRecords(current.services).map((s)=>({id:s.id,status:s.status||'unconfigured',lastSuccessAt:s.lastSuccessAt||null})):[],catalogReadable:allCampuses,user});return true;
+        const current=(await repository.current()),allCampuses=canReadCatalog(user,current),draftScope=catalogScopeSql(user,'drafts'),reportScope=identityScopeSql(user);
+        (await send({catalogRevision:(await repository.revision()),currentRelease:(await repository.setting('currentRelease')),startedAt,metrics:allCampuses?metrics:{},drafts:(await repository.db.prepare(`SELECT id,status,revision,summary FROM drafts WHERE ${draftScope.sql} ORDER BY updated_at DESC,id DESC LIMIT 100`).all(...draftScope.parameters)),reportCount:Number((await repository.db.prepare(`SELECT COUNT(*) count FROM reports LEFT JOIN identities identity ON identity.id=reports.space_id WHERE ${reportScope.sql}`).get(...reportScope.parameters))?.count),sources:allCampuses?arrayRecords(current.sources).map((s)=>({id:s.id,dates:s.dates,owner:s.owner||null})):[],integrations:allCampuses?arrayRecords(current.services).map((s)=>({id:s.id,status:s.status||'unconfigured',lastSuccessAt:s.lastSuccessAt||null})):[],catalogReadable:allCampuses,user}));return true;
       }
-      if(path==='/api/v1/admin/catalog'&&method==='GET'){const catalog=repository.current();assertCatalogReadable(user,catalog);send(catalog);return true;}
-      if(path==='/api/v1/admin/drafts'&&method==='GET'){const page=pagination(url),scope=catalogScopeSql(user,'drafts');sendPage(repository.db.prepare(`SELECT * FROM drafts WHERE ${scope.sql} ORDER BY updated_at DESC,id DESC LIMIT ? OFFSET ?`).all(...scope.parameters,page.limit+1,page.offset),page,(row)=>safeDraft(row,user));return true;}
-      if(path==='/api/v1/admin/drafts'&&method==='POST'){const body=await readBody(request);revision(body,repository.revision());const catalog=checkedCatalog(body.catalog,user),summary=text(body.summary,500,'변경 요약');const id=randomUUID();repository.db.prepare('INSERT INTO drafts(id,catalog,summary,status,author_id,revision,base_revision,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?)').run(id,JSON.stringify(catalog),summary,'draft',user.id,1,repository.revision(),now,now);repository.audit(user.id,'draft.created',id,now);send(safeDraft(repository.db.prepare('SELECT * FROM drafts WHERE id=?').get(id)!,user),201);return true;}
+      if(path==='/api/v1/admin/catalog'&&method==='GET'){const catalog=(await repository.current());assertCatalogReadable(user,catalog);(await send(catalog));return true;}
+      if(path==='/api/v1/admin/drafts'&&method==='GET'){const page=pagination(url),scope=catalogScopeSql(user,'drafts');(await sendPage((await repository.db.prepare(`SELECT * FROM drafts WHERE ${scope.sql} ORDER BY updated_at DESC,id DESC LIMIT ? OFFSET ?`).all(...scope.parameters,page.limit+1,page.offset)),page,(row)=>safeDraft(row,user)));return true;}
+      if(path==='/api/v1/admin/drafts'&&method==='POST'){const body=await readBody(request);revision(body,(await repository.revision()));const catalog=(await checkedCatalog(body.catalog,user)),summary=text(body.summary,500,'변경 요약');const id=randomUUID();(await repository.db.prepare('INSERT INTO drafts(id,catalog,summary,status,author_id,revision,base_revision,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?)').run(id,JSON.stringify(catalog),summary,'draft',user.id,1,(await repository.revision()),now,now));(await repository.audit(user.id,'draft.created',id,now));(await send(safeDraft((await repository.db.prepare('SELECT * FROM drafts WHERE id=?').get(id))!,user),201));return true;}
       const draftMatch=path.match(/^\/api\/v1\/admin\/drafts\/([a-f0-9-]+)$/);
-      if(draftMatch&&method==='PATCH'){const body=await readBody(request);const row=repository.db.prepare('SELECT * FROM drafts WHERE id=?').get(draftMatch[1]);if(!row)fail(404,'RESOURCE_NOT_FOUND','초안을 찾을 수 없습니다.');revision(body,Number(row.revision));assertCatalogScope(user,object(JSON.parse(String(row.catalog))));let catalog=object(JSON.parse(String(row.catalog))),summary=String(row.summary),nextStatus=String(row.status),reviewer=row.reviewer_id?String(row.reviewer_id):null;
-        if(body.catalog!==undefined||body.summary!==undefined){if(!['draft','rejected'].includes(nextStatus)|| (user.role!=='admin'&&row.author_id!==user.id))fail(403,'FORBIDDEN','본인의 편집 가능한 초안만 수정할 수 있습니다.');if(body.catalog!==undefined)catalog=checkedCatalog(body.catalog,user);if(body.summary!==undefined)summary=text(body.summary,500,'변경 요약');nextStatus='draft';reviewer=null;}
+      if(draftMatch&&method==='PATCH'){const body=await readBody(request);const row=(await repository.db.prepare('SELECT * FROM drafts WHERE id=?').get(draftMatch[1]));if(!row)fail(404,'RESOURCE_NOT_FOUND','초안을 찾을 수 없습니다.');revision(body,Number(row.revision));(await assertCatalogScope(user,object(JSON.parse(String(row.catalog)))));let catalog=object(JSON.parse(String(row.catalog))),summary=String(row.summary),nextStatus=String(row.status),reviewer=row.reviewer_id?String(row.reviewer_id):null;
+        if(body.catalog!==undefined||body.summary!==undefined){if(!['draft','rejected'].includes(nextStatus)|| (user.role!=='admin'&&row.author_id!==user.id))fail(403,'FORBIDDEN','본인의 편집 가능한 초안만 수정할 수 있습니다.');if(body.catalog!==undefined)catalog=(await checkedCatalog(body.catalog,user));if(body.summary!==undefined)summary=text(body.summary,500,'변경 요약');nextStatus='draft';reviewer=null;}
         if(body.action==='submit'){if(!['draft','rejected'].includes(nextStatus)||(user.role!=='admin'&&row.author_id!==user.id))fail(409,'INVALID_TRANSITION','제출할 수 있는 초안이 아닙니다.');nextStatus='submitted';}
         else if(body.action==='approve'||body.action==='reject'){if(!['reviewer','admin'].includes(user.role))fail(403,'FORBIDDEN','검토 권한이 필요합니다.');if(nextStatus!=='submitted')fail(409,'INVALID_TRANSITION','제출된 초안만 검토할 수 있습니다.');if(user.role!=='admin'&&row.author_id===user.id)fail(403,'SELF_APPROVAL_REJECTED','다른 검토자가 승인해야 합니다.');nextStatus=body.action==='approve'?'approved':'rejected';reviewer=user.id;}
         else if(body.action!==undefined)fail(422,'INVALID_ACTION','지원하지 않는 초안 작업입니다.');
-        repository.db.prepare('UPDATE drafts SET catalog=?,summary=?,status=?,reviewer_id=?,revision=revision+1,updated_at=? WHERE id=?').run(JSON.stringify(catalog),summary,nextStatus,reviewer,now,String(row.id));repository.audit(user.id,`draft.${String(body.action||'updated')}`,String(row.id),now);send(safeDraft(repository.db.prepare('SELECT * FROM drafts WHERE id=?').get(String(row.id))!,user));return true;
+        (await repository.db.prepare('UPDATE drafts SET catalog=?,summary=?,status=?,reviewer_id=?,revision=revision+1,updated_at=? WHERE id=?').run(JSON.stringify(catalog),summary,nextStatus,reviewer,now,String(row.id)));(await repository.audit(user.id,`draft.${String(body.action||'updated')}`,String(row.id),now));(await send(safeDraft((await repository.db.prepare('SELECT * FROM drafts WHERE id=?').get(String(row.id)))!,user)));return true;
       }
-      if(path==='/api/v1/admin/releases'&&method==='GET'){const page=pagination(url),scope=catalogScopeSql(user,'releases');sendPage(repository.db.prepare(`SELECT id,summary,draft_id AS draftId,created_at AS createdAt FROM releases WHERE ${scope.sql} ORDER BY created_at DESC,id DESC LIMIT ? OFFSET ?`).all(...scope.parameters,page.limit+1,page.offset),page);return true;}
-      if(path==='/api/v1/admin/releases'&&method==='POST'){if(!['admin','reviewer'].includes(user.role))fail(403,'FORBIDDEN','공개 권한이 필요합니다.');const body=await readBody(request);revision(body,repository.revision());const row=repository.db.prepare('SELECT * FROM drafts WHERE id=?').get(text(body.draftId,100,'초안'));if(!row)fail(404,'RESOURCE_NOT_FOUND','초안을 찾을 수 없습니다.');if(row.status!=='approved')fail(409,'APPROVAL_REQUIRED','승인된 초안만 공개할 수 있습니다.');if(Number(row.base_revision)!==repository.revision())fail(409,'BASE_RELEASE_CHANGED','공개 자료가 변경되었습니다. 최신 공개판을 기준으로 새 초안을 검토해 주세요.');const catalog=checkedCatalog(JSON.parse(String(row.catalog)),user);const id=randomUUID();const prepared=checkedPublicBundle(id,catalog,now);repository.transaction(()=>{rememberIds(catalog);repository.db.prepare('INSERT INTO releases VALUES(?,?,?,?,?,?)').run(id,JSON.stringify(catalog),String(row.summary),String(row.id),user.id,now);storeReleaseBundle(repository.db,prepared);repository.setSetting('currentRelease',id);repository.setSetting('revision',String(repository.revision()+1));repository.db.prepare("UPDATE drafts SET status='published',revision=revision+1,updated_at=? WHERE id=?").run(now,String(row.id));repository.audit(user.id,'release.published',id,now);});metrics.releasesPublished++;send({id,revision:repository.revision(),createdAt:now},201);return true;}
+      if(path==='/api/v1/admin/releases'&&method==='GET'){const page=pagination(url),scope=catalogScopeSql(user,'releases');(await sendPage((await repository.db.prepare(`SELECT id,summary,draft_id AS draftId,created_at AS createdAt FROM releases WHERE ${scope.sql} ORDER BY created_at DESC,id DESC LIMIT ? OFFSET ?`).all(...scope.parameters,page.limit+1,page.offset)),page));return true;}
+      if(path==='/api/v1/admin/releases'&&method==='POST'){if(!['admin','reviewer'].includes(user.role))fail(403,'FORBIDDEN','공개 권한이 필요합니다.');const body=await readBody(request);revision(body,(await repository.revision()));const row=(await repository.db.prepare('SELECT * FROM drafts WHERE id=?').get(text(body.draftId,100,'초안')));if(!row)fail(404,'RESOURCE_NOT_FOUND','초안을 찾을 수 없습니다.');if(row.status!=='approved')fail(409,'APPROVAL_REQUIRED','승인된 초안만 공개할 수 있습니다.');if(Number(row.base_revision)!==(await repository.revision()))fail(409,'BASE_RELEASE_CHANGED','공개 자료가 변경되었습니다. 최신 공개판을 기준으로 새 초안을 검토해 주세요.');const catalog=(await checkedCatalog(JSON.parse(String(row.catalog)),user));const id=randomUUID();const prepared=(await checkedPublicBundle(id,catalog,now));(await repository.transaction(async ()=>{(await rememberIds(catalog));(await repository.db.prepare('INSERT INTO releases VALUES(?,?,?,?,?,?)').run(id,JSON.stringify(catalog),String(row.summary),String(row.id),user.id,now));(await storeReleaseBundle(repository.db,prepared));(await repository.setSetting('currentRelease',id));(await repository.setSetting('revision',String((await repository.revision())+1)));(await repository.db.prepare("UPDATE drafts SET status='published',revision=revision+1,updated_at=? WHERE id=?").run(now,String(row.id)));(await repository.audit(user.id,'release.published',id,now));}));metrics.releasesPublished++;(await send({id,revision:(await repository.revision()),createdAt:now},201));return true;}
       const restoreMatch=path.match(/^\/api\/v1\/admin\/releases\/([a-f0-9-]+)\/restore$/);
-      if(restoreMatch&&method==='POST'){if(user.role!=='admin')fail(403,'FORBIDDEN','복구는 관리자만 수행할 수 있습니다.');const body=await readBody(request);revision(body,repository.revision());const row=repository.db.prepare('SELECT catalog FROM releases WHERE id=?').get(restoreMatch[1]);if(!row)fail(404,'RESOURCE_NOT_FOUND','공개판을 찾을 수 없습니다.');const catalog=checkedCatalog(JSON.parse(String(row.catalog)));ensureBundle(restoreMatch[1],catalog,now);repository.transaction(()=>{rememberIds(catalog,true);repository.setSetting('currentRelease',restoreMatch[1]);repository.setSetting('revision',String(repository.revision()+1));repository.audit(user.id,'release.restored',restoreMatch[1],now);});send({id:restoreMatch[1],revision:repository.revision()});return true;}
-      if(path==='/api/v1/admin/reports'&&method==='GET'){const page=pagination(url),scope=identityScopeSql(user);sendPage(repository.db.prepare(`SELECT reports.* FROM reports LEFT JOIN identities identity ON identity.id=reports.space_id WHERE ${scope.sql} ORDER BY reports.created_at DESC,reports.id DESC LIMIT ? OFFSET ?`).all(...scope.parameters,page.limit+1,page.offset),page,safeReport);return true;}
+      if(restoreMatch&&method==='POST'){if(user.role!=='admin')fail(403,'FORBIDDEN','복구는 관리자만 수행할 수 있습니다.');const body=await readBody(request);revision(body,(await repository.revision()));const row=(await repository.db.prepare('SELECT catalog FROM releases WHERE id=?').get(restoreMatch[1]));if(!row)fail(404,'RESOURCE_NOT_FOUND','공개판을 찾을 수 없습니다.');const catalog=(await checkedCatalog(JSON.parse(String(row.catalog))));(await ensureBundle(restoreMatch[1],catalog,now));(await repository.transaction(async ()=>{(await rememberIds(catalog,true));(await repository.setSetting('currentRelease',restoreMatch[1]));(await repository.setSetting('revision',String((await repository.revision())+1)));(await repository.audit(user.id,'release.restored',restoreMatch[1],now));}));(await send({id:restoreMatch[1],revision:(await repository.revision())}));return true;}
+      if(path==='/api/v1/admin/reports'&&method==='GET'){const page=pagination(url),scope=identityScopeSql(user);(await sendPage((await repository.db.prepare(`SELECT reports.* FROM reports LEFT JOIN identities identity ON identity.id=reports.space_id WHERE ${scope.sql} ORDER BY reports.created_at DESC,reports.id DESC LIMIT ? OFFSET ?`).all(...scope.parameters,page.limit+1,page.offset)),page,safeReport));return true;}
       const reportMatch=path.match(/^\/api\/v1\/admin\/reports\/([a-f0-9-]+)(\/photo)?$/);
-      if(reportMatch){const row=repository.db.prepare('SELECT * FROM reports WHERE id=?').get(reportMatch[1]);if(!row)fail(404,'RESOURCE_NOT_FOUND','접수를 찾을 수 없습니다.');assertIdentityScope(user,String(row.space_id));
-        if(method==='GET'&&reportMatch[2]){if(!row.photo)fail(404,'RESOURCE_NOT_FOUND','사진이 없습니다.');response.writeHead(200,{...headers,'Content-Type':String(row.photo_mime),'Content-Disposition':'attachment; filename="report-photo"'});response.end(row.photo);return true;}
-        if(method==='GET'){send(safeReport(row));return true;}if(method==='PATCH'&&!reportMatch[2]){const body=await readBody(request);const state=text(body.status,20,'처리 상태');if(!['received','reviewing','resolved','rejected'].includes(state))fail(422,'INVALID_STATUS','처리 상태를 확인해 주세요.');const note=text(body.responseNote||'',1000,'처리 내용',false);repository.db.prepare('UPDATE reports SET status=?,response_note=?,updated_at=? WHERE id=?').run(state,note,now,String(row.id));repository.audit(user.id,'report.updated',String(row.id),now);send(safeReport(repository.db.prepare('SELECT * FROM reports WHERE id=?').get(String(row.id))!));return true;}
+      if(reportMatch){const row=(await repository.db.prepare('SELECT * FROM reports WHERE id=?').get(reportMatch[1]));if(!row)fail(404,'RESOURCE_NOT_FOUND','접수를 찾을 수 없습니다.');(await assertIdentityScope(user,String(row.space_id)));
+        if(method==='GET'&&reportMatch[2]){if(!row.photo)fail(404,'RESOURCE_NOT_FOUND','사진이 없습니다.');sendBinary(Buffer.from(row.photo as Uint8Array),{'Content-Type':String(row.photo_mime),'Content-Disposition':'attachment; filename="report-photo"'});return true;}
+        if(method==='GET'){(await send(safeReport(row)));return true;}if(method==='PATCH'&&!reportMatch[2]){const body=await readBody(request);const state=text(body.status,20,'처리 상태');if(!['received','reviewing','resolved','rejected'].includes(state))fail(422,'INVALID_STATUS','처리 상태를 확인해 주세요.');const note=text(body.responseNote||'',1000,'처리 내용',false);(await repository.db.prepare('UPDATE reports SET status=?,response_note=?,updated_at=? WHERE id=?').run(state,note,now,String(row.id)));(await repository.audit(user.id,'report.updated',String(row.id),now));(await send(safeReport((await repository.db.prepare('SELECT * FROM reports WHERE id=?').get(String(row.id)))!)));return true;}
       }
-      if(path==='/api/v1/admin/operations'&&method==='GET'){const page=pagination(url),scope=identityScopeSql(user);sendPage(repository.db.prepare(`SELECT operations.payload FROM operations LEFT JOIN identities identity ON identity.id=operations.entity_id WHERE ${scope.sql} ORDER BY operations.updated_at DESC,operations.id DESC LIMIT ? OFFSET ?`).all(...scope.parameters,page.limit+1,page.offset),page,(row)=>object(JSON.parse(String(row.payload))));return true;}
+      if(path==='/api/v1/admin/operations'&&method==='GET'){const page=pagination(url),scope=identityScopeSql(user);(await sendPage((await repository.db.prepare(`SELECT operations.payload FROM operations LEFT JOIN identities identity ON identity.id=operations.entity_id WHERE ${scope.sql} ORDER BY operations.updated_at DESC,operations.id DESC LIMIT ? OFFSET ?`).all(...scope.parameters,page.limit+1,page.offset)),page,(row)=>object(JSON.parse(String(row.payload)))));return true;}
       if(path==='/api/v1/admin/operations'&&method==='POST'){
         if(!['admin','reviewer'].includes(user.role))fail(403,'FORBIDDEN','운영 정보 공개는 검토 권한이 필요합니다.');
-        const body=await readBody(request),payload=makeOperation(body,user,now),id=String(payload.id),entityId=String(payload.entityId);
-        const old=repository.db.prepare('SELECT entity_id,payload FROM operations WHERE id=?').get(id);
-        if(old){assertIdentityScope(user,String(old.entity_id));revision(body,Number(object(JSON.parse(String(old.payload))).revision||1));}
+        const body=await readBody(request),payload=(await makeOperation(body,user,now)),id=String(payload.id),entityId=String(payload.entityId);
+        const old=(await repository.db.prepare('SELECT entity_id,payload FROM operations WHERE id=?').get(id));
+        if(old){(await assertIdentityScope(user,String(old.entity_id)));revision(body,Number(object(JSON.parse(String(old.payload))).revision||1));}
         payload.revision=old?Number(object(JSON.parse(String(old.payload))).revision||1)+1:1;
-        repository.db.prepare('INSERT INTO operations VALUES(?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET entity_id=excluded.entity_id,payload=excluded.payload,actor_id=excluded.actor_id,updated_at=excluded.updated_at').run(id,entityId,JSON.stringify(payload),user.id,now,now);
-        repository.audit(user.id,'operation.published',id,now);send(payload,old?200:201);return true;
+        (await repository.db.prepare('INSERT INTO operations VALUES(?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET entity_id=excluded.entity_id,payload=excluded.payload,actor_id=excluded.actor_id,updated_at=excluded.updated_at').run(id,entityId,JSON.stringify(payload),user.id,now,now));
+        (await repository.audit(user.id,'operation.published',id,now));(await send(payload,old?200:201));return true;
       }
-      if(path==='/api/v1/admin/audit'&&method==='GET'){if(user.role!=='admin')fail(403,'FORBIDDEN','관리자 권한이 필요합니다.');const page=pagination(url,200);sendPage(repository.db.prepare('SELECT * FROM audit ORDER BY id DESC LIMIT ? OFFSET ?').all(page.limit+1,page.offset),page);return true;}
+      if(path==='/api/v1/admin/audit'&&method==='GET'){if(user.role!=='admin')fail(403,'FORBIDDEN','관리자 권한이 필요합니다.');const page=pagination(url,200);(await sendPage((await repository.db.prepare('SELECT * FROM audit ORDER BY id DESC LIMIT ? OFFSET ?').all(page.limit+1,page.offset)),page));return true;}
       fail(404,'RESOURCE_NOT_FOUND','요청한 리소스를 찾을 수 없습니다.');
+      };
+      const external = path==='/api/v1/assistant' || /^\/api\/v1\/admin\/providers\/[^/]+\/sync$/.test(path);
+      if (external) await dispatch(); else await repository.transaction(dispatch);
+      if (!pending.reply) throw new Error('API did not produce a response.');
+      response.writeHead(pending.reply.code,pending.reply.headers);
+      // A response is emitted only after the transaction commits successfully.
+      const bytes=pending.reply.body;
+      function* chunks() { for(let offset=0;offset<bytes.length;offset+=64*1024) yield bytes.subarray(offset,offset+64*1024); }
+      await pipeline(Readable.from(chunks()),response);
     } catch(error) {
       const known=error instanceof ApiError; status=known?error.status:error instanceof URIError?400:500;metrics.errors++;
-      if(!response.headersSent){response.writeHead(status,headers);response.end(JSON.stringify({data:null,error:{code:known?error.code:'INTERNAL_ERROR',message:known?error.message:'요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.'},meta:{requestId,revision:repository.revision()}}));}else response.end();
+      if(!response.headersSent){response.writeHead(status,headers);response.end(JSON.stringify({data:null,error:{code:known?error.code:'INTERNAL_ERROR',message:known?error.message:'요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.'},meta:{requestId}}));}else response.end();
     } finally { options.log?.({timestamp:clock().toISOString(),level:status>=500?'error':'info',service:'campus-api',requestId,operation:(request.url||'').split('?')[0],durationMs:Math.round(performance.now()-started),status}); }
     return true;
   }
-  return { handle,repository,metrics,close:()=>repository.close() };
+  return { handle,repository:localRepository || repository,metrics,close:()=>repository.close() };
 }

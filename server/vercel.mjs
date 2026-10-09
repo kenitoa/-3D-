@@ -1,4 +1,9 @@
-// Generated from server/platform.ts; run npm run build.
+// Generated from server/vercel.ts; run npm run build.
+// server/vercel.ts
+import { isIP as isIP3 } from "node:net";
+import { resolve as resolve4 } from "node:path";
+import { randomUUID as randomUUID3 } from "node:crypto";
+
 // server/platform.ts
 import { DatabaseSync, backup } from "node:sqlite";
 import { randomBytes, randomUUID as randomUUID2, createHash as createHash2, createHmac, scryptSync, timingSafeEqual } from "node:crypto";
@@ -1343,15 +1348,60 @@ async function createPlatform(options) {
   }
   return { handle, repository: localRepository || repository, metrics, close: () => repository.close() };
 }
+
+// server/vercel.ts
+function vercelClientAddress(request) {
+  const address = request.headers["x-forwarded-for"];
+  if (typeof address !== "string" || !isIP3(address)) throw new Error("Vercel client address is unavailable.");
+  return address;
+}
+function createVercelHandler(environment = process.env, connect = remoteClient) {
+  let ready;
+  async function initialize() {
+    const origin = environment.CAMPUS_PUBLIC_ORIGIN;
+    if (!origin || new URL(origin).origin !== origin || !origin.startsWith("https://")) throw new Error("CAMPUS_PUBLIC_ORIGIN must be an explicit HTTPS origin.");
+    if (!environment.TURSO_DATABASE_URL || !environment.TURSO_AUTH_TOKEN) throw new Error("Database configuration is required.");
+    const client = await connect(environment.TURSO_DATABASE_URL, environment.TURSO_AUTH_TOKEN);
+    try {
+      const root = resolve4(".");
+      return await createPlatform({ root, assetRoot: resolve4(root, "dist"), sqlClient: client, origins: [origin], secureCookies: true, clientAddress: vercelClientAddress, log: (record4) => process.stdout.write(JSON.stringify(record4) + "\n") });
+    } catch (error) {
+      client.close();
+      throw error;
+    }
+  }
+  return async (request, response) => {
+    const requestId = randomUUID3();
+    try {
+      const url = new URL(request.url || "/", environment.CAMPUS_PUBLIC_ORIGIN || "https://invalid.local");
+      const routes = url.searchParams.getAll("__campus_route");
+      if (routes.length) {
+        const route = routes[0];
+        if (routes.length !== 1 || !/^\/(?:api\/v1(?:\/[^?#\\\0]*)?|assets\/releases\/[a-f0-9]{64}\.[a-z0-9]+)$/.test(route)) {
+          response.writeHead(400, { "Content-Type": "application/json", "Cache-Control": "no-store" });
+          response.end(JSON.stringify({ data: null, error: { code: "INVALID_ROUTE", message: "\uC694\uCCAD \uACBD\uB85C\uB97C \uD655\uC778\uD574 \uC8FC\uC138\uC694." }, meta: { requestId } }));
+          return;
+        }
+        url.searchParams.delete("__campus_route");
+        request.url = route + (url.searchParams.size ? "?" + url.searchParams.toString() : "");
+      }
+      ready ||= initialize();
+      const platform = await ready;
+      if (!await platform.handle(request, response)) {
+        response.writeHead(404, { "Content-Type": "application/json", "Cache-Control": "no-store" });
+        response.end(JSON.stringify({ data: null, error: { code: "RESOURCE_NOT_FOUND", message: "\uC694\uCCAD\uD55C \uB9AC\uC18C\uC2A4\uB97C \uCC3E\uC744 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4." }, meta: { requestId } }));
+      }
+    } catch {
+      ready = void 0;
+      if (!response.headersSent) {
+        response.writeHead(503, { "Content-Type": "application/json", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff", "Retry-After": "30" });
+        response.end(JSON.stringify({ data: null, error: { code: "SERVICE_UNAVAILABLE", message: "\uC11C\uBE44\uC2A4 \uC5F0\uACB0\uC744 \uD655\uC778 \uC911\uC785\uB2C8\uB2E4. \uC7A0\uC2DC \uD6C4 \uB2E4\uC2DC \uC2DC\uB3C4\uD574 \uC8FC\uC138\uC694." }, meta: { requestId } }));
+      } else response.end();
+      process.stderr.write(JSON.stringify({ level: "error", service: "campus-api", requestId, errorCode: "SERVERLESS_INITIALIZATION_FAILED" }) + "\n");
+    }
+  };
+}
 export {
-  AsyncRepository,
-  CampusRepository,
-  createPlatform,
-  fetchProvider,
-  libsqlDatabase,
-  loadDomain,
-  loadProviders,
-  passwordHash,
-  publicNetworkAddress,
-  remoteClient
+  createVercelHandler,
+  vercelClientAddress
 };

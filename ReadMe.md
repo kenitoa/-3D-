@@ -4,6 +4,8 @@
 
 ## 실행
 
+전체 기능의 Vercel 배포는 [Vercel + Turso 배포 절차](docs/vercel-deployment.md)를 따른다. 정적 화면과 서버리스 API를 함께 배포하고 기존 SQLite 자료는 별도 비공개 사본으로 이전한다.
+
 Windows에서는 `start.cmd`를 더블클릭한다. Node.js 22.22.3 이상이 필요하며 최초 실행은 의존성 설치와 빌드를 수행한다. 브라우저 주소는 **http://127.0.0.1:8765/** 이다.
 
 ```powershell

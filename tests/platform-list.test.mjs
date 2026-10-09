@@ -39,7 +39,7 @@ async function fixture(options={}){
   await new Promise((accept,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',accept);});
   const origin=`http://127.0.0.1:${server.address().port}`;
   try{
-    platform=createPlatform({root,databasePath:join(temporary,'test.sqlite'),origins:[origin],domain,baseline:multiCampus(),now:()=>new Date('2026-10-07T08:00:00Z'),...options});
+    platform=await createPlatform({root,databasePath:join(temporary,'test.sqlite'),origins:[origin],domain,baseline:multiCampus(),now:()=>new Date('2026-10-07T08:00:00Z'),...options});
     for(const [username,role,scopes] of [['admin','admin',[]],['editor','editor',['hanshin-gg']],['allstaff','reviewer',['hanshin-gg',secondCampusId]],['foreign','editor',[secondCampusId]]])platform.repository.createUser(username,`scope-fixture-password-${username}`,role,scopes);
   }catch(error){server.closeAllConnections();await new Promise((accept)=>server.close(accept));platform?.close();await rm(temporary,{recursive:true});throw error;}
   async function request(path,method='GET',body,session){

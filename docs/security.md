@@ -8,7 +8,7 @@
 
 입력 크기/ID/날짜/도형/참조/출처/파일 구조를 검증하고 SQL 바인딩과 textContent/검증 URL을 사용한다. 공개 자산 실제 경로/allowlist·CSP self·관리자 iframe 금지, 자급형 GLB만 허용한다. 공급자는 고정 HTTPS443·public DNS/IP·TLS lookup 고정·redirect금지·8초timeout/제한retry·2MiB JSON 제한이다.
 
-로그는 UTC/requestId/operation path/duration/status다. password/cookie/CSRF/receipt/API key/사진/내용/query를 기록하지 않는다. 프로세스 내 IP 제한은 로그인8회/15분, 제보6회/시간, API300회/분이다. 신뢰 프록시는 정확한 IP를 명시하고 단일 X-Forwarded-For를 덮어쓰는 조건이다. 다중 인스턴스 제한/공격 부하/침투 시험은 미검증이다.
+로그는 UTC/requestId/operation path/duration/status다. password/cookie/CSRF/receipt/API key/사진/내용/query를 기록하지 않는다. DB 공유 IP 제한은 로그인8회/15분, 제보6회/시간, API300회/분이다. 신뢰 프록시는 정확한 IP를 명시하고 단일 X-Forwarded-For를 덮어쓰는 조건이다. Vercel 전용 어댑터는 공급자가 덮어쓴 단일 헤더만 사용한다. 인스턴스 재생성 후 제한 유지와 libSQL 세션/권한/승인은 통합 테스트로 확인하며 클라우드 공격 부하/침투 시험은 별도다.
 
 제보와 사진은 private DB에 저장하고 scoped 담당자에게만 제공한다. metadata 제거와 사용자 동의를 적용한다. 조회키는 상태/답변만 보여준다. 사용자에게 불필요한 개인정보 입력을 피하도록 안내한다. 학교 운영 전에 책임부서·보존/삭제기간·SLA·비밀 교체·백업 접근/암호화를 정해야 한다. 현재 자동 삭제 scheduler는 없다.
 

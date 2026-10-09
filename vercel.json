@@ -1,0 +1,33 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "npm ci --ignore-scripts",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "functions": {
+    "api/campus.mjs": {
+      "maxDuration": 60,
+      "includeFiles": "{dist/**,src/data/*.js,src/domain/*.js,server/migrations/*.sql}"
+    }
+  },
+  "rewrites": [
+    { "source": "/api/v1/:path*", "destination": "/api/campus?__campus_route=/api/v1/:path*" },
+    { "source": "/assets/releases/:asset", "destination": "/api/campus?__campus_route=/assets/releases/:asset" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Strict-Transport-Security", "value": "max-age=31536000" },
+        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; worker-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'" },
+        { "key": "Cache-Control", "value": "no-cache" }
+      ]
+    },
+    { "source": "/", "headers": [{ "key": "X-Campus-Api", "value": "/api/v1" }] },
+    { "source": "/index.html", "headers": [{ "key": "X-Campus-Api", "value": "/api/v1" }] },
+    { "source": "/admin.html", "headers": [{ "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'" }] },
+    { "source": "/api/:path*", "headers": [{ "key": "Cache-Control", "value": "no-store" }] }
+  ]
+}

@@ -17,7 +17,7 @@ if(configuredOrigin){const url=new URL(configuredOrigin);if(url.origin!==configu
 const bindHost=process.env.CAMPUS_BIND_HOST||'127.0.0.1';
 if(!['127.0.0.1','0.0.0.0'].includes(bindHost))throw new Error('CAMPUS_BIND_HOST must be 127.0.0.1 or 0.0.0.0.');
 const embedOrigins=(process.env.CAMPUS_EMBED_ORIGINS||'').split(',').filter(Boolean).map(value=>{const url=new URL(value);if(url.protocol!=='https:'||url.origin!==value||url.username||url.password)throw new Error('CAMPUS_EMBED_ORIGINS must list explicit HTTPS origins.');return url.origin;});
-const platform=process.argv.includes('--platform')?createPlatform({root:resolve('.'),assetRoot:root,databasePath:process.env.CAMPUS_DB_PATH,providersFile:process.env.CAMPUS_PROVIDERS_FILE,origins:configuredOrigin?[configuredOrigin]:[`http://127.0.0.1:${port}`,`http://localhost:${port}`],secureCookies:configuredOrigin?.startsWith('https:'),trustedProxyIPs:(process.env.CAMPUS_TRUSTED_PROXY_IPS||'').split(',').filter(Boolean),log:(record)=>process.stdout.write(JSON.stringify(record)+'\n')}):null;
+const platform=process.argv.includes('--platform')?await createPlatform({root:resolve('.'),assetRoot:root,databasePath:process.env.CAMPUS_DB_PATH,providersFile:process.env.CAMPUS_PROVIDERS_FILE,origins:configuredOrigin?[configuredOrigin]:[`http://127.0.0.1:${port}`,`http://localhost:${port}`],secureCookies:configuredOrigin?.startsWith('https:'),trustedProxyIPs:(process.env.CAMPUS_TRUSTED_PROXY_IPS||'').split(',').filter(Boolean),log:(record)=>process.stdout.write(JSON.stringify(record)+'\n')}):null;
 const server = http.createServer(async (request, response) => {
   const headers = {
     'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'strict-origin-when-cross-origin',

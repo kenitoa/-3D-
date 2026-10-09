@@ -1,5 +1,7 @@
 # 실행·배포·복구
 
+Vercel에서 관리자·제보·승인까지 운영할 때는 [Vercel + Turso 배포](vercel-deployment.md)를 따른다. 아래 로컬/컨테이너 절차는 기존 SQLite 서버용이다.
+
 ## 로컬 실행과 관리자
 
 Node.js 22.22.3 이상이 필요하다. Windows 루트 `start.cmd`를 더블클릭하면 설치·빌드·풀스택 서버 실행 후 브라우저를 연다. 사용자 주소는 **http://127.0.0.1:8765/**, 관리자 주소는 **http://127.0.0.1:8765/admin.html**이다. 자동 열기가 실패하면 주소창에 입력한다.
@@ -36,6 +38,8 @@ npm.cmd run db:backup -- C:\campus-backups\campus-20261007.sqlite
 | CAMPUS_PROVIDER_TOKEN | secretEnv로 지정 가능한 비밀 환경 변수 예. 브라우저에 전달 금지 |
 | CAMPUS_TRUSTED_PROXY_IPS | 선택한 프록시의 정확한 IP 목록. 기본 신뢰 없음 |
 | CAMPUS_IFC_PYTHON | 선택 제작 도구의 절대 Python 경로. 서버/브라우저 실행에 불필요 |
+| TURSO_DATABASE_URL | Vercel/원격 관리 CLI 전용 TLS Turso DB 주소 |
+| TURSO_AUTH_TOKEN | 해당 DB의 읽기/쓰기 토큰. 서버 전용 비밀값 |
 
 프록시는 Host를 공개 origin에 맞춰 전달하고 X-Forwarded-For를 단일 실제 클라이언트 IP로 덮어써야 한다. IP 체인은 거부한다. 신뢰 프록시 설정 없이 여러 사용자 요청이 같은 프록시를 통과하면 IP 속도 제한을 공유한다. 서버 포트는 방화벽/loopback으로 제한하고 HTTPS는 reverse proxy에서 종료한다.
 

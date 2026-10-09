@@ -1,7 +1,7 @@
 import { readFileSync, realpathSync, lstatSync, existsSync } from 'node:fs';
 import { resolve, relative, isAbsolute, extname } from 'node:path';
 import { createHash } from 'node:crypto';
-import type { DatabaseSync } from 'node:sqlite';
+import type { SqlDatabase } from './database';
 import { validateModelManifest, validateSelfContainedGlb } from '../src/scene/model-loader';
 import type { ModelManifest, ModelEntry } from '../src/scene/model-loader';
 
@@ -29,7 +29,7 @@ function safeRead(root:string,path:string):Buffer {
 function referencesPublicBuilding(model:ModelEntry,manifest:ModelManifest,catalog:RecordValue):boolean {
   return Array.isArray(catalog.entities)&&catalog.entities.some((item:unknown)=>object(item)&&item.kind==='building'&&item.visibility==='public'&&!item.sensitive&&item.campusId===(model.campusId||manifest.campusId)&&[item.id,item.legacyId,item.legacyKey].some(key=>typeof key==='string'&&[model.id,model.buildingId,model.legacyId].includes(key)));
 }
-export function prepareReleaseBundle(root:string,releaseId:string,catalog:RecordValue,createdAt:string,db:DatabaseSync):{bundle:ReleaseBundle;assets:StoredAsset[]} {
+export async function prepareReleaseBundle(root:string,releaseId:string,catalog:RecordValue,createdAt:string,db:SqlDatabase):Promise<{bundle:ReleaseBundle;assets:StoredAsset[]}> {
   const input:unknown=catalog.assetManifest||JSON.parse(readFileSync(resolve(root,'src/data/model-manifest.json'),'utf8'));
   validateModelManifest(input);
   const sourceIds=new Set((Array.isArray(catalog.sources)?catalog.sources:[]).filter(item=>object(item)&&item.visibility==='public').map(item=>(item as RecordValue).id));
@@ -52,7 +52,7 @@ export function prepareReleaseBundle(root:string,releaseId:string,catalog:Record
   });
   const assets:StoredAsset[]=[];let total=0;
   for(const [path,expected] of paths){
-    const previous=path.match(/^assets\/releases\/([a-f0-9]{64})\.([a-z0-9]+)$/),stored=previous?db.prepare('SELECT body,extension FROM public_asset_blobs WHERE sha256=? AND extension=?').get(previous[1],'.'+previous[2]):null;
+    const previous=path.match(/^assets\/releases\/([a-f0-9]{64})\.([a-z0-9]+)$/),stored=previous?await db.prepare('SELECT body,extension FROM public_asset_blobs WHERE sha256=? AND extension=?').get(previous[1],'.'+previous[2]):null;
     const body=stored?Buffer.from(stored.body as Uint8Array):safeRead(root,path),sha256=digest(body),extension=extname(path),mime=extensions[extension];
     if(!mime||expected.bytes!==undefined&&expected.bytes!==body.length||expected.sha256!==undefined&&expected.sha256!==sha256)throw new Error('Published asset bytes or SHA do not match their manifest.');
     if(extension==='.glb'){
@@ -73,9 +73,19 @@ export function prepareReleaseBundle(root:string,releaseId:string,catalog:Record
   const bundle:ReleaseBundle={schemaVersion:1,releaseId,contentVersion:String(catalog.contentVersion),assetsVersion:manifest.version,catalogHash:digest(JSON.stringify(publicCatalog)),catalog:publicCatalog,manifest:publicManifest,assets:assets.map(asset=>asset.snapshot),mediaRecords:mediaRecords.map(record=>({...record,path:renamed.get(record.path)!.path})),createdAt};
   return {bundle,assets};
 }
-export function storeReleaseBundle(db:DatabaseSync,prepared:ReturnType<typeof prepareReleaseBundle>):void {
+export async function storeReleaseBundle(db:SqlDatabase,prepared:Awaited<ReturnType<typeof prepareReleaseBundle>>):Promise<void> {
   const {bundle,assets}=prepared;
-  db.prepare('INSERT INTO release_bundles VALUES(?,?,?)').run(bundle.releaseId,JSON.stringify(bundle),bundle.createdAt);
-  for(const asset of assets){db.prepare('INSERT OR IGNORE INTO public_asset_blobs VALUES(?,?,?,?,?)').run(asset.snapshot.sha256,asset.extension,asset.mime,asset.body.length,asset.body);db.prepare('INSERT INTO release_asset_links VALUES(?,?,?,?)').run(bundle.releaseId,asset.snapshot.sha256,asset.extension,asset.snapshot.originalPath);}
+  await db.prepare('INSERT INTO release_bundles VALUES(?,?,?)').run(bundle.releaseId,JSON.stringify(bundle),bundle.createdAt);
+  const existing = new Set((await db.prepare('SELECT sha256,extension FROM public_asset_blobs').all()).map(row => `${String(row.sha256)}${String(row.extension)}`));
+  for(const asset of assets){
+    const key=`${asset.snapshot.sha256}${asset.extension}`;
+    if(existing.has(key))continue;
+    // Bound each outbound SQL payload, including large Babylon.js snapshots.
+    const chunk=512*1024;
+    await db.prepare('INSERT INTO public_asset_blobs VALUES(?,?,?,?,?)').run(asset.snapshot.sha256,asset.extension,asset.mime,asset.body.length,asset.body.subarray(0,chunk));
+    for(let offset=chunk;offset<asset.body.length;offset+=chunk)await db.prepare('UPDATE public_asset_blobs SET body=CAST(body || ? AS BLOB) WHERE sha256=? AND extension=?').run(asset.body.subarray(offset,offset+chunk),asset.snapshot.sha256,asset.extension);
+    existing.add(key);
+  }
+  await db.batch(assets.map(asset=>({sql:'INSERT INTO release_asset_links VALUES(?,?,?,?)',args:[bundle.releaseId,asset.snapshot.sha256,asset.extension,asset.snapshot.originalPath]})));
 }
-export function readReleaseBundle(db:DatabaseSync,id:string):ReleaseBundle|null {const row=db.prepare('SELECT payload FROM release_bundles WHERE release_id=?').get(id);return row?JSON.parse(String(row.payload)) as ReleaseBundle:null;}
+export async function readReleaseBundle(db:SqlDatabase,id:string):Promise<ReleaseBundle|null> {const row=await db.prepare('SELECT payload FROM release_bundles WHERE release_id=?').get(id);return row?JSON.parse(String(row.payload)) as ReleaseBundle:null;}

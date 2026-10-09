@@ -8,6 +8,7 @@ playwright-report/
 !.env.example
 var/
 backups/
+.vercel/
 evidence/*.pdf
 evidence/*.html
 evidence/campus-map-page*.png

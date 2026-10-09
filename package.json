@@ -16,9 +16,11 @@
     "check:generated": "node scripts/build.mjs --check",
     "admin:create": "node scripts/manage-platform.mjs create-user",
     "db:backup": "node scripts/manage-platform.mjs backup",
+    "db:remote": "node scripts/manage-remote.mjs",
     "admin:disable": "node scripts/manage-platform.mjs disable-user"
   },
   "dependencies": {
+    "@libsql/client": "0.18.0",
     "babylonjs": "9.29.0",
     "babylonjs-gui": "9.29.0",
     "babylonjs-loaders": "9.29.0",
@@ -34,6 +36,6 @@
     "typescript": "7.0.2"
   },
   "engines": {
-    "node": ">=22.22.3"
+    "node": ">=22.22.3 <23"
   }
 }
