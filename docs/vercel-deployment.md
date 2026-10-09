@@ -1,6 +1,6 @@
 # Vercel 전체 기능 배포
 
-정적 화면은 `dist/`, API는 `api/campus.mjs` Node Function, 영속 데이터는 Turso libSQL에 둔다. 로컬 실행은 기존 SQLite를 유지한다. Vercel 함수의 임시 파일 시스템에 DB를 만들지 않는다. 작성·검토·승인·제보·세션 API와 URL은 그대로다.
+정적 화면은 `dist/`, API는 `api/campus.mjs` Node Function, 영속 데이터는 Turso libSQL에 둔다. 함수와 DB는 도쿄 지역으로 맞춰 DB 왕복 지연을 줄인다. 로컬 실행은 기존 SQLite를 유지한다. Vercel 함수의 임시 파일 시스템에 DB를 만들지 않는다. 작성·검토·승인·제보·세션 API와 URL은 그대로다.
 
 ## 데이터 이전 순서
 
